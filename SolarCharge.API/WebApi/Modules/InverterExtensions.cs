@@ -12,8 +12,9 @@ public static class InverterExtensions
         services.Configure<InverterOptions>(
             configuration.GetSection(InverterOptions.Inverter));
         
-        services.AddHttpClient(InverterService.HttpClientName);
-        services.AddScoped<IInverter, InverterService>();
+        services.AddHttpClient();
+        services.AddKeyedScoped<IInverter, NoOpInverterService>(InverterType.Unknown);
+        services.AddKeyedScoped<IInverter, FroniusInverterService>(InverterType.Fronius);
 
         return services;
     }

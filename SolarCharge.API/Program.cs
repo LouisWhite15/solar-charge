@@ -1,5 +1,7 @@
+using Coravel;
 using Serilog;
 using Serilog.Events;
+using SolarCharge.API.Application.Jobs;
 using SolarCharge.API.WebApi.Modules;
 
 Log.Logger = new LoggerConfiguration()
@@ -19,7 +21,8 @@ builder.Services.AddSerilog((_, lc) => lc
 
 builder.Services
     .AddSqlite(builder.Configuration)
-    .AddInverter(builder.Configuration);
+    .AddInverter(builder.Configuration)
+    .AddApplication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -32,5 +35,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+app.Services.UseScheduler(s =>
+{
+    s.Schedule<WriteInverterStatusInvokable>()
+        .EveryMinute();
+});
 
 await app.RunAsync();

@@ -4,5 +4,6 @@ public class InverterOptions
 {
     public const string Inverter = "Inverter";
 
-    public string InverterUrl { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+    public InverterType Type { get; set; } = InverterType.Unknown;
 }
