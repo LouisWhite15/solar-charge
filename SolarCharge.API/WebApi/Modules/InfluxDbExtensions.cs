@@ -13,6 +13,7 @@ public static class InfluxDbExtensions
             configuration.GetSection(InfluxDbOptions.InfluxDb));
         
         services.AddSingleton<IInfluxDb, InfluxDbService>();
+        //services.AddSingleton<IInfluxDb, NoOpInfluxDbService>();
         
         return services;
     }

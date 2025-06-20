@@ -9,11 +9,11 @@ namespace SolarCharge.API.Application.Jobs;
 public class WriteInverterStatusInvokable(
     ILogger<WriteInverterStatusInvokable> logger,
     IOptions<InverterOptions> inverterOptions,
-    IKeyedServiceProvider keyedServiceProvider,
+    IServiceProvider serviceProvider,
     IInfluxDb influxDb) 
     : Coravel.Invocable.IInvocable
 {
-    private readonly IInverter _inverter = keyedServiceProvider.GetRequiredKeyedService<IInverter>(inverterOptions.Value.Type);
+    private readonly IInverter _inverter = serviceProvider.GetRequiredKeyedService<IInverter>(inverterOptions.Value.Type);
 
     public async Task Invoke()
     {
@@ -40,7 +40,7 @@ public class WriteInverterStatusInvokable(
                 .Field("value", inverterStatus.Load)
                 .Timestamp(now, WritePrecision.Ms);
 
-            write.WritePoints(new [] { pvPoint, gridPoint, loadPoint }, "main", "solar-charge");
+            write.WritePoints(new [] { pvPoint, gridPoint, loadPoint }, "home", "solar-charge");
         });
         
     }

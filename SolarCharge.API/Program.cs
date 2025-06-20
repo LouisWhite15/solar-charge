@@ -1,45 +1,68 @@
 using Coravel;
+using Microsoft.Extensions.Options;
 using Serilog;
-using Serilog.Events;
+using SolarCharge.API.Application;
 using SolarCharge.API.Application.Jobs;
 using SolarCharge.API.WebApi.Modules;
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Information("Starting up!");
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-builder.Services.AddSerilog((_, lc) => lc
-    .ReadFrom.Configuration(builder.Configuration));
-
-builder.Services
-    .AddSqlite(builder.Configuration)
-    .AddInverter(builder.Configuration)
-    .AddApplication(builder.Configuration);
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+try
 {
-    app.MapOpenApi();
+    var builder = WebApplication.CreateBuilder(args);
+
+    // Add services to the container.
+    // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+    builder.Services.AddOpenApi();
+
+    builder.Services.AddSerilog((services, lc) => lc
+        .ReadFrom.Configuration(builder.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .WriteTo.Console());
+
+    builder.Services
+        .AddSqlite(builder.Configuration)
+        .AddInfluxDb(builder.Configuration)
+        .AddInverter(builder.Configuration)
+        .AddApplication(builder.Configuration);
+
+    builder.Services.AddControllers();
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi();
+    }
+
+    app.UseHttpsRedirection();
+
+    app.MapControllers();
+
+    app.Services.UseScheduler(s =>
+    {
+        var applicationOptions = app.Services.GetRequiredService<IOptions<ApplicationOptions>>();
+        s.Schedule<WriteInverterStatusInvokable>()
+            .Cron(applicationOptions.Value.InverterStatusCheckCron);
+    });
+
+    await app.RunAsync();
+    
+    Log.Information("Stopped cleanly");
+    return 0;
 }
-
-app.UseHttpsRedirection();
-
-app.MapControllers();
-
-app.Services.UseScheduler(s =>
+catch (Exception ex)
 {
-    s.Schedule<WriteInverterStatusInvokable>()
-        .EveryMinute();
-});
-
-await app.RunAsync();
+    Log.Fatal(ex, "An unhandled exception occurred during bootstrapping");
+    return 1;
+}
+finally
+{
+    await Log.CloseAndFlushAsync();
+}
