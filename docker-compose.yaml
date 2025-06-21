@@ -12,5 +12,6 @@ services:
       DOCKER_INFLUXDB_INIT_BUCKET: home
     volumes:
       - influxdb2-data:/Users/louiswhite/app-persistence
+
 volumes:
   influxdb2-data:

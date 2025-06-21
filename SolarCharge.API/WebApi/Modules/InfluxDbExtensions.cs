@@ -1,3 +1,4 @@
+using SolarCharge.API.Application.Features;
 using SolarCharge.API.Application.Services;
 using SolarCharge.API.Infrastructure.InfluxDB;
 
@@ -9,11 +10,19 @@ public static class InfluxDbExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        var featureOptions = configuration.GetSection(FeatureOptions.Features).Get<FeatureOptions>();
+        
         services.Configure<InfluxDbOptions>(
             configuration.GetSection(InfluxDbOptions.InfluxDb));
-        
-        services.AddSingleton<IInfluxDb, InfluxDbService>();
-        //services.AddSingleton<IInfluxDb, NoOpInfluxDbService>();
+
+        if (featureOptions?.IsInfluxDbEnabled is true)
+        {
+            services.AddSingleton<IInfluxDb, InfluxDbService>();
+        }
+        else
+        {
+            services.AddSingleton<IInfluxDb, NoOpInfluxDbService>();
+        }
         
         return services;
     }

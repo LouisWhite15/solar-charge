@@ -2,7 +2,7 @@ using Coravel;
 using Microsoft.Extensions.Options;
 using Serilog;
 using SolarCharge.API.Application;
-using SolarCharge.API.Application.Jobs;
+using SolarCharge.API.Application.Invokables;
 using SolarCharge.API.WebApi.Modules;
 
 Log.Logger = new LoggerConfiguration()
@@ -26,11 +26,11 @@ try
         .WriteTo.Console());
 
     builder.Services
+        .AddApplication(builder.Configuration)
         .AddSqlite(builder.Configuration)
         .AddInfluxDb(builder.Configuration)
-        .AddInverter(builder.Configuration)
-        .AddApplication(builder.Configuration);
-
+        .AddInverter(builder.Configuration);
+    
     builder.Services.AddControllers();
 
     var app = builder.Build();

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using SolarCharge.API.Application.Services;
 using SolarCharge.API.Infrastructure.Inverter;
 
-namespace SolarCharge.API.Application.Jobs;
+namespace SolarCharge.API.Application.Invokables;
 
 public class WriteInverterStatusInvokable(
     ILogger<WriteInverterStatusInvokable> logger,
