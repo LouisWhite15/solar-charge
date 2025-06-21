@@ -7,10 +7,10 @@ EXPOSE 5051
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["SolarCharge.API.csproj", "SolarCharge.API/"]
+COPY ["SolarCharge.API.csproj", "."]
 RUN dotnet restore "SolarCharge.API.csproj"
 COPY . .
-WORKDIR "/src/SolarCharge.API"
+WORKDIR "/src"
 RUN dotnet build "./SolarCharge.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
