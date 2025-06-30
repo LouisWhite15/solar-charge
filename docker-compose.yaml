@@ -21,7 +21,7 @@ services:
       Serilog__MinimumLevel__Default: "Verbose"
       Features__IsInfluxEnabled: true
       InfluxDb__Url: http://influxdb2:8086
-      Application__InverterStatusCheckCron: "*/1 * * * *"
+      Application__InverterStatusCheckCron: "*/2 * * * *"
 
 volumes:
   influxdb2-data:
