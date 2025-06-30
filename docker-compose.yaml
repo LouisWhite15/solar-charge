@@ -13,5 +13,15 @@ services:
     volumes:
       - influxdb2-data:/Users/louiswhite/app-persistence
 
+  solar-charge:
+    image: ghcr.io/louiswhite15/solar-charge:latest
+    ports:
+      - 5050:5050
+    environment:
+      Serilog__MinimumLevel__Default: "Verbose"
+      Features__IsInfluxEnabled: true
+      InfluxDb__Url: http://influxdb2:8086
+      Application__InverterStatusCheckCron: "*/1 * * * *"
+
 volumes:
   influxdb2-data:

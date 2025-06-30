@@ -17,10 +17,10 @@ public class WriteInverterStatusInvokable(
 
     public async Task Invoke()
     {
-        logger.LogTrace("Retrieving inverter status");
+        logger.LogDebug("Retrieving inverter status");
         var inverterStatus = await _inverter.GetAsync();
-
-        logger.LogTrace("Writing inverter status to InfluxDB");
+        
+        logger.LogDebug("Writing inverter status to InfluxDB");
         influxDb.Write(write =>
         {
             var now = DateTime.UtcNow;

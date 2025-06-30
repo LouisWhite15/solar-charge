@@ -14,7 +14,7 @@ public class InfluxDbService(
 
     public void Write(Action<WriteApi> action)
     {
-        logger.LogDebug("Writing to InfluxDB");
+        logger.LogTrace("Writing to InfluxDB");
         
         using var client = new InfluxDBClient(_url, _token);
         using var write = client.GetWriteApi();
@@ -23,7 +23,7 @@ public class InfluxDbService(
 
     public async Task<T> QueryAsync<T>(Func<QueryApi, Task<T>> action)
     {
-        logger.LogDebug("Writing to InfluxDB");
+        logger.LogTrace("Querying InfluxDB");
         
         using var client = new InfluxDBClient(_url, _token);
         var query = client.GetQueryApi();
