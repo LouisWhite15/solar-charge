@@ -1,3 +1,4 @@
+using Coravel.Invocable;
 using SolarCharge.API.Application.Services;
 
 namespace SolarCharge.API.Application.Invokables;
@@ -5,7 +6,7 @@ namespace SolarCharge.API.Application.Invokables;
 public class EvaluateSolarGenerationInvokable(
     ILogger<EvaluateSolarGenerationInvokable> logger,
     IInfluxDb influxDb)
-    : Coravel.Invocable.IInvocable
+    : IInvocable
 {
     public Task Invoke()
     {

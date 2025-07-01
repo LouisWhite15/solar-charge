@@ -1,3 +1,4 @@
+using Coravel.Invocable;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
 using Microsoft.Extensions.Options;
@@ -11,7 +12,7 @@ public class WriteInverterStatusInvokable(
     IOptions<InverterOptions> inverterOptions,
     IServiceProvider serviceProvider,
     IInfluxDb influxDb) 
-    : Coravel.Invocable.IInvocable
+    : IInvocable
 {
     private readonly IInverter _inverter = serviceProvider.GetRequiredKeyedService<IInverter>(inverterOptions.Value.Type);
 
