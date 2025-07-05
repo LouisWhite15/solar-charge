@@ -4,7 +4,7 @@ WORKDIR /app
 EXPOSE 5050
 EXPOSE 5051
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["SolarCharge.API.csproj", "."]
