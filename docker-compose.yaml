@@ -10,6 +10,7 @@ services:
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: AdminToken0==
       DOCKER_INFLUXDB_INIT_ORG: solar-charge
       DOCKER_INFLUXDB_INIT_BUCKET: home
+      DOCKER_INFLUXDB_INIT_RETENTION: 2d
     volumes:
       - influxdb2-data:/Users/louiswhite/app-persistence
 
