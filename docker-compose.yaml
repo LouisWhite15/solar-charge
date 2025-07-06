@@ -12,7 +12,7 @@ services:
       DOCKER_INFLUXDB_INIT_BUCKET: home
       DOCKER_INFLUXDB_INIT_RETENTION: 2d
     volumes:
-      - influxdb2-data:/Users/louiswhite/app-persistence
+      - influxdb2-data:/var/lib/influxdb2
 
   solar-charge:
     image: ghcr.io/louiswhite15/solar-charge:latest
@@ -24,6 +24,7 @@ services:
       InfluxDb__Url: http://influxdb2:8086
       InfluxDb__Token: AdminToken0==
       Application__InverterStatusCheckCron: "*/2 * * * *"
+      Application__EvaluateSolarGenerationCron": "*/10 * * * *"
 
 volumes:
   influxdb2-data:
