@@ -50,8 +50,7 @@ try
             .Cron(applicationOptions.Value.InverterStatusCheckCron);
 
         s.Schedule<EvaluateSolarGenerationInvokable>()
-            //.Cron(applicationOptions.Value.EvaluateSolarGenerationCron);
-            .EverySeconds(5);
+            .Cron(applicationOptions.Value.EvaluateSolarGenerationCron);
     });
 
     await app.RunAsync();
