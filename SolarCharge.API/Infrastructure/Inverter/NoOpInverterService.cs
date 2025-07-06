@@ -1,4 +1,4 @@
-using SolarCharge.API.Application.Services;
+using SolarCharge.API.Application.Interfaces;
 using SolarCharge.API.Domain.ValueObjects;
 
 namespace SolarCharge.API.Infrastructure.Inverter;

@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using SolarCharge.API.Application.Services;
+using SolarCharge.API.Application.Interfaces;
 using SolarCharge.API.Infrastructure.Extensions;
 
 namespace SolarCharge.API.Infrastructure.DataAccess;

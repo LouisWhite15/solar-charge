@@ -6,7 +6,8 @@ using SolarCharge.API.Application.Invokables;
 using SolarCharge.API.WebApi.Modules;
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
+    .Enrich.FromLogContext()
+    .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}")
     .CreateBootstrapLogger();
 
 Log.Information("Starting up!");
@@ -19,11 +20,8 @@ try
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddOpenApi();
 
-    builder.Services.AddSerilog((services, lc) => lc
-        .ReadFrom.Configuration(builder.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
-        .WriteTo.Console());
+    builder.Services.AddSerilog((_, lc) => lc
+        .ReadFrom.Configuration(builder.Configuration));
 
     builder.Services
         .AddApplication(builder.Configuration)
@@ -50,6 +48,10 @@ try
         var applicationOptions = app.Services.GetRequiredService<IOptions<ApplicationOptions>>();
         s.Schedule<WriteInverterStatusInvokable>()
             .Cron(applicationOptions.Value.InverterStatusCheckCron);
+
+        s.Schedule<EvaluateSolarGenerationInvokable>()
+            //.Cron(applicationOptions.Value.EvaluateSolarGenerationCron);
+            .EverySeconds(5);
     });
 
     await app.RunAsync();

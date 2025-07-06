@@ -1,10 +1,10 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using SolarCharge.API.Application.Services;
+using SolarCharge.API.Application.Interfaces;
 using SolarCharge.API.Domain.ValueObjects;
 using SolarCharge.API.Infrastructure.Inverter.Dtos;
 
-namespace SolarCharge.API.Infrastructure.Inverter;
+namespace SolarCharge.API.Infrastructure.Inverter.Fronius;
 
 public class FroniusInverterService(
     ILogger<FroniusInverterService> logger,

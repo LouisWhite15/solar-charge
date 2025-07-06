@@ -1,5 +1,5 @@
 using SolarCharge.API.Application.Features;
-using SolarCharge.API.Application.Services;
+using SolarCharge.API.Application.Interfaces;
 using SolarCharge.API.Infrastructure.InfluxDB;
 
 namespace SolarCharge.API.WebApi.Modules;

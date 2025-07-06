@@ -2,6 +2,8 @@ using Coravel;
 using SolarCharge.API.Application;
 using SolarCharge.API.Application.Features;
 using SolarCharge.API.Application.Invokables;
+using SolarCharge.API.Application.Services;
+using SolarCharge.API.Domain;
 
 namespace SolarCharge.API.WebApi.Modules;
 
@@ -18,11 +20,17 @@ public static class ApplicationExtensions
         services.Configure<FeatureOptions>(
             configuration.GetSection(FeatureOptions.Features));
         
+        // Services
+        services.AddKeyedTransient<IChargingStrategy, UnknownChargeStateStrategy>(ChargeState.Unknown);
+        services.AddKeyedTransient<IChargingStrategy, VehicleChargingStrategy>(ChargeState.Charging);
+        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(ChargeState.Stopped);
+        
         // MediatR
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
 
         // Coravel scheduling
         services.AddTransient<WriteInverterStatusInvokable>();
+        services.AddTransient<EvaluateSolarGenerationInvokable>();
         services.AddScheduler();
         
         return services;

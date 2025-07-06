@@ -1,5 +1,5 @@
 using InfluxDB.Client;
-using SolarCharge.API.Application.Services;
+using SolarCharge.API.Application.Interfaces;
 
 namespace SolarCharge.API.Infrastructure.InfluxDB;
 

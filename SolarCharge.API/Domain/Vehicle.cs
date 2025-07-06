@@ -5,24 +5,24 @@ namespace SolarCharge.API.Domain;
 
 public class Vehicle : Entity, IVehicle
 {
-    public bool IsCharging { get; private set; }
+    public ChargeState ChargeState { get; private set; }
     
     public void StartCharging()
     {
-        if (IsCharging)
+        if (ChargeState is ChargeState.Charging or ChargeState.Charged)
             return;
         
-        IsCharging = true;
+        ChargeState = ChargeState.Charging;
         
         AddDomainEvent(new VehicleStartedChargingEvent(Id));
     }
 
     public void StopCharging()
     {
-        if (!IsCharging)
+        if (ChargeState is ChargeState.Stopped)
             return;
-        
-        IsCharging = true;
+
+        ChargeState = ChargeState.Stopped;
         
         AddDomainEvent(new VehicleStoppedChargingEvent(Id));
     }

@@ -1,4 +1,4 @@
-namespace SolarCharge.API.Application.Services;
+namespace SolarCharge.API.Application.Interfaces;
 
 public interface IUnitOfWork
 {

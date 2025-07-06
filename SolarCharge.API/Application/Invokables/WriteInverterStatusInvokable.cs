@@ -2,7 +2,7 @@ using Coravel.Invocable;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
 using Microsoft.Extensions.Options;
-using SolarCharge.API.Application.Services;
+using SolarCharge.API.Application.Interfaces;
 using SolarCharge.API.Infrastructure.Inverter;
 
 namespace SolarCharge.API.Application.Invokables;

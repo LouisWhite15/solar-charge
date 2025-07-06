@@ -1,5 +1,6 @@
-using SolarCharge.API.Application.Services;
+using SolarCharge.API.Application.Interfaces;
 using SolarCharge.API.Infrastructure.Inverter;
+using SolarCharge.API.Infrastructure.Inverter.Fronius;
 
 namespace SolarCharge.API.WebApi.Modules;
 
