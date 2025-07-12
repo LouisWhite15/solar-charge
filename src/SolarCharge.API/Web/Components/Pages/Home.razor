@@ -1,0 +1,137 @@
+﻿@page "/"
+@using SolarCharge.API.Application.Interfaces
+@using SolarCharge.API.Application.Models
+
+<PageTitle>SolarCharge</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="mb-4 text-center">Login to Tesla</h1>
+
+            <p class="text-center">
+                Use the fields below to login to Tesla to enable integration with your Tesla vehicle.
+            </p>
+
+            @if (!string.IsNullOrEmpty(teslaLogonUrl))
+            {
+                <div class="text-center mb-3">
+                    <a href="@teslaLogonUrl" target="_blank" class="btn btn-primary">Tesla Logon URL</a>
+                </div>
+
+                <p class="text-center">
+                    Follow the link above and log in using Tesla's authentication.<br />
+                    When you get to a "Page not Found" page, copy the URL from your browser and paste it into the form below.
+                </p>
+            }
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="post" @onSubmit="SubmitUrlWithCodeAsync" @formname="tesla-auth-url">
+                        <AntiforgeryToken />
+                        <div class="mb-3">
+                            <label class="form-label">URL:</label>
+                            <InputText @bind-Value="@urlWithCode" class="form-control"/>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Submit URL with Code</button>
+                    </form>
+                </div>
+            </div>
+            
+            @if (Tokens is not null)
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Tokens Retrieved</h5>
+                        <p><strong>Access Token:</strong> @Tokens.AccessToken</p>
+                        <p><strong>Refresh Token:</strong> @Tokens.RefreshToken</p>
+                    </div>
+                </div>
+            }
+
+            <p class="text-center">
+                If you would like to obtain the tokens via another method, you can submit them below:
+            </p>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post" @onSubmit="SubmitProvidedTokens" @formname="tesla-provided-auth-token">
+                        <AntiforgeryToken />
+                        <div class="mb-3">
+                            <label class="form-label">Access Token:</label>
+                            <InputText @bind-Value="@accessToken" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Refresh Token:</label>
+                            <InputText @bind-Value="@refreshToken" class="form-control"/>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Submit Tokens</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    private ITeslaAuthService TeslaAuthService { get; set; }
+
+    private Dictionary<string, string> AuthenticationParameters { get; set; }
+    private TeslaAuthTokens Tokens { get; set; } = null;
+
+    private string? teslaLogonUrl = null;
+    private string? urlWithCode = null;
+    private string? accessToken = null;
+    private string? refreshToken = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationParameters = TeslaAuthService.GetAuthenticationParameters();
+        teslaLogonUrl = GetTeslaLogonUrl(AuthenticationParameters);
+    }
+
+    private async Task SubmitUrlWithCodeAsync()
+    {
+        if (urlWithCode is null)
+            return;
+
+        Tokens = await TeslaAuthService.AuthenticateAsync(urlWithCode, AuthenticationParameters);
+    }
+
+    private void SubmitProvidedTokens()
+    {
+        if (accessToken is null || refreshToken is null)
+            return;
+    }
+
+    private string GetTeslaLogonUrl(Dictionary<string, string> authenticationParameters)
+    {
+        var queryParameters = new Dictionary<string, string>
+        {
+            {"client_id", authenticationParameters["client_id"]},
+            {"code_challenge", authenticationParameters["code_challenge"]},
+            {"code_challenge_method", authenticationParameters["code_challenge_method"]},
+            {"redirect_uri", authenticationParameters["redirect_uri"]},
+            {"response_type", authenticationParameters["response_type"]},
+            {"scope", authenticationParameters["scope"]},
+            {"state", authenticationParameters["state"]}
+        };
+
+        var queryString = BuildQueryString(queryParameters);
+        return $"https://auth.tesla.com/oauth2/v3/authorize?{queryString}";
+    }
+
+    private static string BuildQueryString(Dictionary<string, string> parameters)
+    {
+        var list = new List<string>();
+        foreach (var kvp in parameters)
+        {
+            var encodedKey = Uri.EscapeDataString(kvp.Key);
+            var encodedValue = Uri.EscapeDataString(kvp.Value);
+            list.Add($"{encodedKey}={encodedValue}");
+        }
+        return string.Join("&", list);
+    }
+}
