@@ -1,4 +1,6 @@
+using FluentValidation;
 using Serilog;
+using SolarCharge.ChatBot.Modules;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -12,6 +14,14 @@ try
     var builder = WebApplication.CreateBuilder(args);
     
     builder.Services.AddOpenApi();
+
+    builder.Services
+        .AddSqlite(builder.Configuration)
+        .AddTelegramBot(builder.Configuration);
+
+    builder.Services.AddControllers();
+    
+    builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
     var app = builder.Build();
     

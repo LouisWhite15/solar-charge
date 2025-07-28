@@ -9,6 +9,8 @@ public static class TelegramExtensions
         services.Configure<TelegramOptions>(
             configuration.GetSection(TelegramOptions.Telegram));
         
+        services.AddScoped<ITelegramService, TelegramService>();
+        
         services.AddHostedService<TelegramBot>();
         
         return services;
