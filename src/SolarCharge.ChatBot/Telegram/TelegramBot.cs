@@ -50,16 +50,19 @@ public class TelegramBot(
         if (existingBot?.ChatId is null)
         {
             await SaveAsync(botContext, chatId);
+            await SendMessage(chatId, "Solar Charge Telegram Bot setup is complete! This chat will be used for all future communications.");
             return;
         }
         
         if (existingBot.ChatId == chatId)
         {
             logger.LogDebug("ChatId is already set to this chat. Continuing to use ChatId: {ChatId}", chatId);
+            await SendMessage(chatId, "Solar Charge Telegram Bot is already set up to use this chat!");
             return;
         }
 
         await UpdateAsync(botContext, chatId);
+        await SendMessage(chatId, "Solar Charge Telegram Bot setup is complete! This chat will be used for all future communications");
     }
 
     private async Task SaveAsync(BotContext context, long chatId)
@@ -82,5 +85,11 @@ public class TelegramBot(
         
         bot.ChatId = chatId;
         await context.SaveChangesAsync();
+    }
+
+    private async Task SendMessage(long chatId, string message)
+    {
+        var bot = new TelegramBotClient(_botToken);
+        await bot.SendMessage(chatId, message);
     }
 }

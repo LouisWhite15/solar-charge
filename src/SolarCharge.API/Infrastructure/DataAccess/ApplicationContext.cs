@@ -5,6 +5,10 @@ using SolarCharge.API.Infrastructure.Extensions;
 
 namespace SolarCharge.API.Infrastructure.DataAccess;
 
+/// <summary>
+/// To create a migration against this DbContext. Run the following command from the "SolarCharge.ChatBot" directory.
+/// dotnet ef migrations add MigrationNameHere -o .\Infrastructure\DataAccess\Migrations
+/// </summary>
 public class ApplicationContext : DbContext, IUnitOfWork
 {
     private readonly IMediator _mediator;

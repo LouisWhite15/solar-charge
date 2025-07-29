@@ -19,4 +19,9 @@ RUN dotnet publish "./SolarCharge.API.csproj" -c $BUILD_CONFIGURATION -o /app/pu
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+USER root
+RUN mkdir -p /persistence && chmod 777 /persistence
+USER $APP_UID
+
 ENTRYPOINT ["dotnet", "SolarCharge.API.dll"]

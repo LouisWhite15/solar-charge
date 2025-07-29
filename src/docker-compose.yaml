@@ -1,6 +1,7 @@
 services:
   influxdb2:
     image: influxdb:latest
+    container_name: influxdb
     ports:
       - 8086:8086
     environment:
@@ -18,11 +19,14 @@ services:
     build:
       context: ./SolarCharge.API
       dockerfile: Dockerfile
+    container_name: solar-charge
     ports:
       - 5000:5000
     environment:
+      ASPNETCORE_URLS: "http://*:5000"
       Serilog__MinimumLevel__Default: "Verbose"
       Features__IsInfluxEnabled: true
+      Features__IsChatBotEnabled: true
       Inverter__Type: "Fronius"
       Inverter__Url: "http://192.168.1.51"
       InfluxDb__Url: http://influxdb2:8086
@@ -30,8 +34,9 @@ services:
       Application__InverterStatusCheckCron: "*/2 * * * *"
       Application__EvaluateSolarGenerationCron": "*/10 * * * *"
       Persistence__ConnectionString: "Data Source=/persistence/app.db"
+      ChatBot__Url: "http://solar-charge-telegram"
     volumes:
-      - app-data:/persistence/app.db
+      - app-data:/persistence
     depends_on:
       - influxdb2
   
@@ -39,14 +44,16 @@ services:
     build:
       context: ./SolarCharge.ChatBot
       dockerfile: Dockerfile
+    container_name: solar-charge-telegram
     environment:
+      ASPNETCORE_URLS: "http://*:5010"
       Serilog__MinimumLevel__Default: "Verbose"
       Persistence__ConnectionString: "Data Source=/persistence/chatbot.db"
       Telegram__BotToken: "YOUR_TELEGRAM_BOT_TOKEN"
     ports:
       - 5010:5010
     volumes:
-      - telegram-data:/persistence/chatbot.db
+      - telegram-data:/persistence
 
 volumes:
   influxdb2-data:

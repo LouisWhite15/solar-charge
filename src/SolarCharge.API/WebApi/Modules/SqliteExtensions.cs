@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SolarCharge.API.Infrastructure.DataAccess;
+using ILogger = Serilog.ILogger;
 
 namespace SolarCharge.API.WebApi.Modules;
 
@@ -13,5 +14,16 @@ public static class SqliteExtensions
             options => options.UseSqlite(configuration.GetValue<string>("Persistence__ConnectionString")));
         
         return services;
+    }
+    
+    public static void Migrate(this IServiceProvider services, ILogger logger)
+    {
+        logger.ForContext<Program>().Information("Migrating database");
+        
+        using var scope = services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+        dbContext.Database.Migrate();
+        
+        logger.ForContext<Program>().Information("Database migrated");
     }
 }
