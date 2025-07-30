@@ -14,8 +14,9 @@ services:
       DOCKER_INFLUXDB_INIT_RETENTION: 2d
     volumes:
       - influxdb2-data:/var/lib/influxdb2
+    restart: unless-stopped
 
-  solar-charge:
+  solar-charge-api:
     build:
       context: ./SolarCharge.API
       dockerfile: Dockerfile
@@ -39,6 +40,7 @@ services:
       - app-data:/persistence
     depends_on:
       - influxdb2
+    restart: unless-stopped
   
   solar-charge-telegram:
     build:
@@ -54,6 +56,7 @@ services:
       - 5010:5010
     volumes:
       - telegram-data:/persistence
+    restart: unless-stopped
 
 volumes:
   influxdb2-data:

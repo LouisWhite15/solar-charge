@@ -14,9 +14,10 @@ services:
       DOCKER_INFLUXDB_INIT_RETENTION: 2d
     volumes:
       - influxdb2-data:/var/lib/influxdb2
+    restart: unless-stopped
 
-  solar-charge:
-    image: ghcr.io/louiswhite15/solar-charge:latest
+  solar-charge-api:
+    image: ghcr.io/louiswhite15/solar-charge-api:latest
     container_name: solar-charge
     ports:
       - 5000:5000
@@ -37,7 +38,8 @@ services:
       - app-data:/persistence
     depends_on:
       - influxdb2
-  
+    restart: unless-stopped
+
   solar-charge-telegram:
     image: ghcr.io/louiswhite15/solar-charge-chatbot:latest
     container_name: solar-charge-telegram
@@ -50,6 +52,7 @@ services:
       - 5010:5010
     volumes:
       - telegram-data:/persistence
+    restart: unless-stopped
 
 volumes:
   influxdb2-data:
