@@ -1,4 +1,5 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 @using SolarCharge.API.Application.Interfaces
 @using SolarCharge.API.Application.Models
 
@@ -13,10 +14,10 @@
                 Use the fields below to login to Tesla to enable integration with your Tesla vehicle.
             </p>
 
-            @if (!string.IsNullOrEmpty(teslaLogonUrl))
+            @if (!string.IsNullOrEmpty(_teslaLogonUrl))
             {
                 <div class="text-center mb-3">
-                    <a href="@teslaLogonUrl" target="_blank" class="btn btn-primary">Tesla Logon URL</a>
+                    <a href="@_teslaLogonUrl" target="_blank" class="btn btn-primary">Tesla Logon URL</a>
                 </div>
 
                 <p class="text-center">
@@ -27,11 +28,11 @@
 
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
-                    <form method="post" @onSubmit="SubmitUrlWithCodeAsync" @formname="tesla-auth-url">
+                    <form method="post" @onsubmit="SubmitUrlWithCodeAsync" @onsubmit:preventDefault="true" @formname="tesla-auth-url">
                         <AntiforgeryToken />
                         <div class="mb-3">
                             <label class="form-label">URL:</label>
-                            <InputText @bind-Value="@urlWithCode" class="form-control"/>
+                            <InputText @bind-Value="@UrlWithCode" class="form-control"/>
                         </div>
                         <button type="submit" class="btn btn-success w-100">Submit URL with Code</button>
                     </form>
@@ -55,15 +56,15 @@
 
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form method="post" @onSubmit="SubmitProvidedTokens" @formname="tesla-provided-auth-token">
+                    <form method="post" @onsubmit="SubmitProvidedTokens" @formname="tesla-provided-auth-token">
                         <AntiforgeryToken />
                         <div class="mb-3">
                             <label class="form-label">Access Token:</label>
-                            <InputText @bind-Value="@accessToken" class="form-control"/>
+                            <InputText @bind-Value="@AccessToken" class="form-control"/>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Refresh Token:</label>
-                            <InputText @bind-Value="@refreshToken" class="form-control"/>
+                            <InputText @bind-Value="@RefreshToken" class="form-control"/>
                         </div>
                         <button type="submit" class="btn btn-success w-100">Submit Tokens</button>
                     </form>
@@ -79,30 +80,36 @@
     private ITeslaAuthService TeslaAuthService { get; set; }
 
     private Dictionary<string, string> AuthenticationParameters { get; set; }
-    private TeslaAuthTokens Tokens { get; set; } = null;
+    private TeslaAuthTokens? Tokens { get; set; }
 
-    private string? teslaLogonUrl = null;
-    private string? urlWithCode = null;
-    private string? accessToken = null;
-    private string? refreshToken = null;
+    private string? _teslaLogonUrl = null;
+    
+    [SupplyParameterFromForm(FormName = "tesla-auth-url")]
+    private string? UrlWithCode { get; set; }
+    
+    [SupplyParameterFromForm(FormName = "tesla-provided-auth-token")]
+    private string? AccessToken { get; set; }
+    
+    [SupplyParameterFromForm(FormName = "tesla-provided-auth-token")]
+    private string? RefreshToken { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         AuthenticationParameters = TeslaAuthService.GetAuthenticationParameters();
-        teslaLogonUrl = GetTeslaLogonUrl(AuthenticationParameters);
+        _teslaLogonUrl = GetTeslaLogonUrl(AuthenticationParameters);
     }
 
     private async Task SubmitUrlWithCodeAsync()
     {
-        if (urlWithCode is null)
+        if (UrlWithCode is null)
             return;
-
-        Tokens = await TeslaAuthService.AuthenticateAsync(urlWithCode, AuthenticationParameters);
+        
+        Tokens = await TeslaAuthService.AuthenticateAsync(UrlWithCode, AuthenticationParameters);
     }
 
     private void SubmitProvidedTokens()
     {
-        if (accessToken is null || refreshToken is null)
+        if (AccessToken is null || RefreshToken is null)
             return;
     }
 
