@@ -16,7 +16,9 @@ services:
       - influxdb2-data:/var/lib/influxdb2
 
   solar-charge:
-    image: ghcr.io/louiswhite15/solar-charge:latest
+    build:
+      context: ./SolarCharge.API
+      dockerfile: Dockerfile
     container_name: solar-charge
     ports:
       - 5000:5000
@@ -39,7 +41,9 @@ services:
       - influxdb2
   
   solar-charge-telegram:
-    image: ghcr.io/louiswhite15/solar-charge-chatbot:latest
+    build:
+      context: ./SolarCharge.ChatBot
+      dockerfile: Dockerfile
     container_name: solar-charge-telegram
     environment:
       ASPNETCORE_URLS: "http://*:5010"
