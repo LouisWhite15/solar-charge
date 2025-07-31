@@ -1,4 +1,4 @@
-namespace SolarCharge.API.Infrastructure.Inverter.Dtos;
+namespace SolarCharge.API.Infrastructure.Inverter.Fronius.Dtos;
 
 public class InverterStatusDto
 {

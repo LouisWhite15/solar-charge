@@ -36,7 +36,7 @@ try
 
     app.MapControllers();
 
-    // Auto-migrate on app startup
+    // Auto-migrate database on app startup
     app.Services.Migrate(Log.Logger);
 
     await app.RunAsync();

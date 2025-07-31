@@ -1,8 +1,8 @@
-using SolarCharge.API.Application.Interfaces;
+using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Infrastructure.Inverter;
 using SolarCharge.API.Infrastructure.Inverter.Fronius;
 
-namespace SolarCharge.API.WebApi.Modules;
+namespace SolarCharge.API.Api.Modules;
 
 public static class InverterExtensions
 {
@@ -13,7 +13,8 @@ public static class InverterExtensions
         services.Configure<InverterOptions>(
             configuration.GetSection(InverterOptions.Inverter));
         
-        services.AddHttpClient();
+        services.AddScoped<IInverter, InverterService>();
+        
         services.AddKeyedScoped<IInverter, NoOpInverterService>(InverterType.Unknown);
         services.AddKeyedScoped<IInverter, FroniusInverterService>(InverterType.Fronius);
 

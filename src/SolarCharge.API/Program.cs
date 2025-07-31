@@ -1,10 +1,10 @@
 using Coravel;
 using Microsoft.Extensions.Options;
 using Serilog;
+using SolarCharge.API.Api.Modules;
 using SolarCharge.API.Application;
 using SolarCharge.API.Application.Invokables;
 using SolarCharge.API.Web.Components;
-using SolarCharge.API.WebApi.Modules;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -32,7 +32,7 @@ try
         .AddSqlite(builder.Configuration)
         .AddInfluxDb(builder.Configuration)
         .AddInverter(builder.Configuration)
-        .AddTesla()
+        .AddTesla(builder.Configuration)
         .AddChatBot(builder.Configuration);
     
     builder.Services.AddControllers();
@@ -68,6 +68,9 @@ try
     app.MapStaticAssets();
     app.MapRazorComponents<App>()
         .AddInteractiveServerRenderMode();
+    
+    // Auto-migrate database on app startup
+    app.Services.Migrate(Log.Logger);
 
     await app.RunAsync();
     

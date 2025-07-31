@@ -3,24 +3,18 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using Microsoft.IdentityModel.Tokens;
-using SolarCharge.API.Application.Interfaces;
 using SolarCharge.API.Application.Models;
+using SolarCharge.API.Application.Ports;
+using SolarCharge.API.Infrastructure.Tesla.Dtos;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
 
-public class TeslaAuthService : ITeslaAuthService
+public class TeslaAuthenticationService(
+    ILogger<TeslaAuthenticationService> logger,
+    IHttpClientFactory httpClientFactory,
+    ITeslaAuthenticationRepository teslaAuthenticationRepository)
+    : ITeslaAuthenticationService
 {
-    private readonly ILogger<TeslaAuthService> _logger;
-    private readonly IHttpClientFactory _httpClientFactory;
-    
-    public TeslaAuthService(
-        ILogger<TeslaAuthService> logger,
-        IHttpClientFactory httpClientFactory)
-    {
-        _logger = logger;
-        _httpClientFactory = httpClientFactory;
-    }
-
     public Dictionary<string, string> GetAuthenticationParameters()
     {
         var codeVerifier = GetRandomString(86);
@@ -40,7 +34,7 @@ public class TeslaAuthService : ITeslaAuthService
         };
     }
 
-    public async Task<TeslaAuthTokens> AuthenticateAsync(string urlWithCode, Dictionary<string, string> authenticationParameters)
+    public async Task<bool> AuthenticateAsync(string urlWithCode, Dictionary<string, string> authenticationParameters)
     {
         var finalUri = new Uri(urlWithCode);
         var queryParams = HttpUtility.ParseQueryString(finalUri.Query);
@@ -56,19 +50,28 @@ public class TeslaAuthService : ITeslaAuthService
         };
         var jsonRequest = JsonSerializer.Serialize(requestParameters);
         
-        var httpClient = _httpClientFactory.CreateClient("tesla-auth-client");
+        var httpClient = httpClientFactory.CreateClient("tesla-auth-client");
         var tokenResponse = await httpClient.PostAsync("https://auth.tesla.com/oauth2/v3/token", new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
-        tokenResponse.EnsureSuccessStatusCode();
-        
         var tokenContent = await tokenResponse.Content.ReadAsStringAsync();
-        var tokens = JsonSerializer.Deserialize<TeslaAuthTokens>(tokenContent);
+        
+        if (!tokenResponse.IsSuccessStatusCode)
+        {
+            logger.LogError("Error authenticating Tesla user. StatusCode: {StatusCode}. Content: {Content}", tokenResponse.StatusCode, tokenContent);
+            return false;
+        }
+        
+        var tokens = JsonSerializer.Deserialize<TeslaAuthenticationResult>(tokenContent);
 
-        return tokens ?? new TeslaAuthTokens();
-    }
+        if (tokens is null)
+        {
+            logger.LogError("Tesla Authentication Tokens could not be deserialized");
+            return false;
+        }
+        
+        logger.LogDebug("Persisting Tesla Authentication Tokens");
+        await teslaAuthenticationRepository.SetAsync(new TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
 
-    public Task AuthenticateAsync(string authToken, string refreshToken)
-    {
-        throw new NotImplementedException();
+        return true;
     }
 
     public Task RefreshAsync()

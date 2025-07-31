@@ -1,7 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@using SolarCharge.API.Application.Interfaces
-@using SolarCharge.API.Application.Models
+@using SolarCharge.API.Application.Ports
 
 <PageTitle>SolarCharge</PageTitle>
 
@@ -39,34 +38,36 @@
                 </div>
             </div>
             
-            @if (Tokens is not null)
+            @if (_authenticationSuccessful is true)
             {
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Tokens Retrieved</h5>
-                        <p><strong>Access Token:</strong> @Tokens.AccessToken</p>
-                        <p><strong>Refresh Token:</strong> @Tokens.RefreshToken</p>
-                    </div>
+                <div class="text-center mt-3">
+                    <p class="text-success fw-bold">Tesla authentication was successful!</p>
+                </div>
+            }
+            @if (_authenticationSuccessful is false)
+            {
+                <div class="text-center mt-3">
+                    <p class="text-danger fw-bold">Tesla authentication failed. Please check the URL and try again.</p>
                 </div>
             }
 
-            <p class="text-center">
-                If you would like to obtain the tokens via another method, you can submit them below:
+            <p class="text-center text-muted fw-semibold">
+                🚧 Manual token entry — <span class="text-warning">coming soon</span>.
             </p>
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm opacity-50">
                 <div class="card-body">
                     <form method="post" @onsubmit="SubmitProvidedTokens" @formname="tesla-provided-auth-token">
                         <AntiforgeryToken />
                         <div class="mb-3">
                             <label class="form-label">Access Token:</label>
-                            <InputText @bind-Value="@AccessToken" class="form-control"/>
+                            <InputText @bind-Value="@AccessToken" class="form-control" disabled />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Refresh Token:</label>
-                            <InputText @bind-Value="@RefreshToken" class="form-control"/>
+                            <InputText @bind-Value="@RefreshToken" class="form-control" disabled />
                         </div>
-                        <button type="submit" class="btn btn-success w-100">Submit Tokens</button>
+                        <button type="submit" class="btn btn-success w-100" disabled>Submit Tokens</button>
                     </form>
                 </div>
             </div>
@@ -77,10 +78,10 @@
 
 @code {
     [Inject]
-    private ITeslaAuthService TeslaAuthService { get; set; }
+    private ITeslaAuthenticationService TeslaAuthenticationService { get; set; }
 
     private Dictionary<string, string> AuthenticationParameters { get; set; }
-    private TeslaAuthTokens? Tokens { get; set; }
+    private bool? _authenticationSuccessful;
 
     private string? _teslaLogonUrl = null;
     
@@ -93,10 +94,12 @@
     [SupplyParameterFromForm(FormName = "tesla-provided-auth-token")]
     private string? RefreshToken { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        AuthenticationParameters = TeslaAuthService.GetAuthenticationParameters();
+        AuthenticationParameters = TeslaAuthenticationService.GetAuthenticationParameters();
         _teslaLogonUrl = GetTeslaLogonUrl(AuthenticationParameters);
+
+        return Task.CompletedTask;
     }
 
     private async Task SubmitUrlWithCodeAsync()
@@ -104,16 +107,15 @@
         if (UrlWithCode is null)
             return;
         
-        Tokens = await TeslaAuthService.AuthenticateAsync(UrlWithCode, AuthenticationParameters);
+        _authenticationSuccessful = await TeslaAuthenticationService.AuthenticateAsync(UrlWithCode, AuthenticationParameters);
     }
 
-    private void SubmitProvidedTokens()
+    private static void SubmitProvidedTokens()
     {
-        if (AccessToken is null || RefreshToken is null)
-            return;
+        // Coming soon
     }
 
-    private string GetTeslaLogonUrl(Dictionary<string, string> authenticationParameters)
+    private static string GetTeslaLogonUrl(Dictionary<string, string> authenticationParameters)
     {
         var queryParameters = new Dictionary<string, string>
         {

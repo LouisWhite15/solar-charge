@@ -1,6 +1,6 @@
 using InfluxDB.Client;
 using Microsoft.Extensions.Options;
-using SolarCharge.API.Application.Interfaces;
+using SolarCharge.API.Application.Ports;
 
 namespace SolarCharge.API.Infrastructure.InfluxDB;
 

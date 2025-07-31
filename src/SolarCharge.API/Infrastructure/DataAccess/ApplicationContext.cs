@@ -1,39 +1,13 @@
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using SolarCharge.API.Application.Interfaces;
-using SolarCharge.API.Infrastructure.Extensions;
+using SolarCharge.API.Infrastructure.DataAccess.Entities;
 
 namespace SolarCharge.API.Infrastructure.DataAccess;
 
 /// <summary>
-/// To create a migration against this DbContext. Run the following command from the "SolarCharge.ChatBot" directory.
+/// To create a migration against this DbContext. Run the following command from the "SolarCharge.API" directory.
 /// dotnet ef migrations add MigrationNameHere -o .\Infrastructure\DataAccess\Migrations
 /// </summary>
-public class ApplicationContext : DbContext, IUnitOfWork
+public class ApplicationContext(DbContextOptions<ApplicationContext> options) : DbContext(options)
 {
-    private readonly IMediator _mediator;
-    
-    public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
-
-    public ApplicationContext(DbContextOptions<ApplicationContext> options, IMediator mediator) : base(options)
-    {
-        _mediator = mediator;
-    }
-    
-    public new async Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        // Dispatch Domain Events. 
-        // Choices:
-        // A) Right BEFORE committing data (EF SaveChanges) into the DB will make a single transaction including  
-        // side effects from the domain event handlers which are using the same DbContext with "InstancePerLifetimeScope" or "scoped" lifetime
-        // B) Right AFTER committing data (EF SaveChanges) into the DB will make multiple transactions. 
-        // You will need to handle eventual consistency and compensatory actions in case of failures in any of the Handlers. 
-        await _mediator.PublishDomainEventsAsync(this);
-
-        // After executing this line all the changes (from the Command Handler and Domain Event Handlers) 
-        // performed through the DbContext will be committed
-        _ = await base.SaveChangesAsync(cancellationToken);
-
-        return true;
-    }
+    public DbSet<TeslaAuthenticationEntity> TeslaAuthentications { get; set; }
 }

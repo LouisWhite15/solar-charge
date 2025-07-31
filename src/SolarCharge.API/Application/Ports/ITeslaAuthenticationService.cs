@@ -1,8 +1,6 @@
-﻿using SolarCharge.API.Application.Models;
+﻿namespace SolarCharge.API.Application.Ports;
 
-namespace SolarCharge.API.Application.Interfaces;
-
-public interface ITeslaAuthService
+public interface ITeslaAuthenticationService
 {
     /// <summary>
     /// Retrieve the authentication parameters that are required for authentication via the Tesla auth API
@@ -16,17 +14,10 @@ public interface ITeslaAuthService
     /// <param name="urlWithCode"></param>
     /// <param name="authenticationParameters"></param>
     /// <returns></returns>
-    Task<TeslaAuthTokens> AuthenticateAsync(string urlWithCode, Dictionary<string, string> authenticationParameters);
-    
-    /// <summary>
-    /// Authenticate to the Tesla Owner API using provided auth token and refresh token
-    /// </summary>
-    /// <param name="authToken"></param>
-    /// <param name="refreshToken"></param>
-    Task AuthenticateAsync(string authToken, string refreshToken);
+    Task<bool> AuthenticateAsync(string urlWithCode, Dictionary<string, string> authenticationParameters);
 
     /// <summary>
-    /// Refresh the auth token
+    /// Refresh the access token
     /// </summary>
     Task RefreshAsync();
 }

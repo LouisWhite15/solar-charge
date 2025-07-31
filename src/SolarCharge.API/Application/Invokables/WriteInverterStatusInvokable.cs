@@ -1,25 +1,20 @@
 using Coravel.Invocable;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
-using Microsoft.Extensions.Options;
-using SolarCharge.API.Application.Interfaces;
-using SolarCharge.API.Infrastructure.Inverter;
+using SolarCharge.API.Application.Ports;
 
 namespace SolarCharge.API.Application.Invokables;
 
 public class WriteInverterStatusInvokable(
     ILogger<WriteInverterStatusInvokable> logger,
-    IOptions<InverterOptions> inverterOptions,
-    IServiceProvider serviceProvider,
-    IInfluxDb influxDb) 
+    IInfluxDb influxDb,
+    IInverter inverter)
     : IInvocable
 {
-    private readonly IInverter _inverter = serviceProvider.GetRequiredKeyedService<IInverter>(inverterOptions.Value.Type);
-
     public async Task Invoke()
     {
         logger.LogDebug("Retrieving inverter status");
-        var inverterStatus = await _inverter.GetAsync();
+        var inverterStatus = await inverter.GetAsync();
         
         logger.LogDebug("Writing inverter status to InfluxDB");
         influxDb.Write(write =>

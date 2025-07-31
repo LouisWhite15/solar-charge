@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
-using SolarCharge.API.Application.Interfaces;
+using SolarCharge.API.Application.Ports;
 
 namespace SolarCharge.API.Infrastructure.ChatBot;
 

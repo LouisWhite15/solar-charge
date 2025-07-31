@@ -1,6 +1,6 @@
 using InfluxDB.Client;
 
-namespace SolarCharge.API.Application.Interfaces;
+namespace SolarCharge.API.Application.Ports;
 
 public interface IInfluxDb
 {

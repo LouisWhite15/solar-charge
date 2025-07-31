@@ -1,8 +1,8 @@
 using SolarCharge.API.Application.Features;
-using SolarCharge.API.Application.Interfaces;
+using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Infrastructure.InfluxDB;
 
-namespace SolarCharge.API.WebApi.Modules;
+namespace SolarCharge.API.Api.Modules;
 
 public static class InfluxDbExtensions
 {

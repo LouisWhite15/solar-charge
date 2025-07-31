@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SolarCharge.API.Infrastructure.DataAccess;
 using ILogger = Serilog.ILogger;
 
-namespace SolarCharge.API.WebApi.Modules;
+namespace SolarCharge.API.Api.Modules;
 
 public static class SqliteExtensions
 {
