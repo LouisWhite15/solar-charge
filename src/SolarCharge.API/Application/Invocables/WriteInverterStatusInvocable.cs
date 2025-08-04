@@ -3,10 +3,10 @@ using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
 using SolarCharge.API.Application.Ports;
 
-namespace SolarCharge.API.Application.Invokables;
+namespace SolarCharge.API.Application.Invocables;
 
-public class WriteInverterStatusInvokable(
-    ILogger<WriteInverterStatusInvokable> logger,
+public class WriteInverterStatusInvocable(
+    ILogger<WriteInverterStatusInvocable> logger,
     IInfluxDb influxDb,
     IInverter inverter)
     : IInvocable

@@ -1,4 +1,5 @@
 ﻿using SolarCharge.API.Application.Ports;
+using SolarCharge.API.Application.Repositories;
 using SolarCharge.API.Infrastructure.Tesla;
 using SolarCharge.API.Infrastructure.Tesla.Repositories;
 
@@ -12,8 +13,10 @@ public static class TeslaExtensions
             configuration.GetSection(TeslaOptions.Tesla));
         
         services.AddTransient<ITeslaAuthenticationService, TeslaAuthenticationService>();
-
+        services.AddTransient<ITesla, TeslaService>();
+        
         services.AddScoped<ITeslaAuthenticationRepository, TeslaAuthenticationRepository>();
+        services.AddScoped<IVehicleRepository, VehicleRepository>();
 
         return services;
     }

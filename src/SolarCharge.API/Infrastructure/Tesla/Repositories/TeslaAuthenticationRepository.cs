@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SolarCharge.API.Application.Models;
-using SolarCharge.API.Application.Ports;
+using SolarCharge.API.Application.Repositories;
 using SolarCharge.API.Infrastructure.DataAccess;
 using SolarCharge.API.Infrastructure.DataAccess.Crypto;
 using SolarCharge.API.Infrastructure.DataAccess.Entities;
@@ -32,7 +32,7 @@ public class TeslaAuthenticationRepository(
 
     public async Task SetAsync(TeslaAuthentication teslaAuthentication)
     {
-        logger.LogTrace("Persisting Tesla Authentication");
+        logger.LogTrace("Saving Tesla Authentication");
 
         var encryptedTeslaAuthentication = new TeslaAuthenticationEntity(
             AesEncryption.Encrypt(teslaAuthentication.AccessToken, teslaOptions.Value.EncryptionKey),

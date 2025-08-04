@@ -1,14 +1,18 @@
 using Coravel.Invocable;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
+using SolarCharge.API.Application.Repositories;
 using SolarCharge.API.Application.Services;
+using SolarCharge.API.Application.Services.Vehicles;
+using SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
 
-namespace SolarCharge.API.Application.Invokables;
+namespace SolarCharge.API.Application.Invocables;
 
-public class EvaluateSolarGenerationInvokable(
-    ILogger<EvaluateSolarGenerationInvokable> logger,
+public class ExecuteChargingStrategyInvocable(
+    ILogger<ExecuteChargingStrategyInvocable> logger,
     IInfluxDb influxDb,
-    IServiceProvider serviceProvider)
+    IServiceProvider serviceProvider,
+    IVehicleService vehicleService)
     : IInvocable
 {
     public async Task Invoke()
@@ -29,10 +33,12 @@ public class EvaluateSolarGenerationInvokable(
         var records = tables.SelectMany(t => t.Records);
         var influxInverterStatusResult = new InverterStatusResult(records);
 
-        // We will retrieve the known vehicle state here later but for now we don't know
-        const ChargeState chargeState = ChargeState.Unknown;
+        var vehicle = await vehicleService.GetVehicleAsync();
+        var chargeState = vehicle?.ChargeState ?? ChargeState.Unknown;
+        
         var chargingStrategy = serviceProvider.GetRequiredKeyedService<IChargingStrategy>(chargeState);
-
+        
+        logger.LogDebug("Executing charging strategy for {ChargeState}", chargeState);
         await chargingStrategy.Evaluate(influxInverterStatusResult);
     }
 }

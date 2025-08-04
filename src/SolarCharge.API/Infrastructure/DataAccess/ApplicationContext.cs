@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SolarCharge.API.Application.Models;
 using SolarCharge.API.Infrastructure.DataAccess.Entities;
 
 namespace SolarCharge.API.Infrastructure.DataAccess;
@@ -10,4 +11,11 @@ namespace SolarCharge.API.Infrastructure.DataAccess;
 public class ApplicationContext(DbContextOptions<ApplicationContext> options) : DbContext(options)
 {
     public DbSet<TeslaAuthenticationEntity> TeslaAuthentications { get; set; }
+    public DbSet<Vehicle> Vehicles { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Vehicle>()
+            .HasKey(vehicle => vehicle.Id);
+    }
 }

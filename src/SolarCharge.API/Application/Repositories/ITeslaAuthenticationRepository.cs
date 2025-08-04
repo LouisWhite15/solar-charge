@@ -1,6 +1,6 @@
 ﻿using SolarCharge.API.Application.Models;
 
-namespace SolarCharge.API.Application.Ports;
+namespace SolarCharge.API.Application.Repositories;
 
 public interface ITeslaAuthenticationRepository
 {

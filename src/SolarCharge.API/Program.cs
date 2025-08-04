@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Serilog;
 using SolarCharge.API.Api.Modules;
 using SolarCharge.API.Application;
-using SolarCharge.API.Application.Invokables;
+using SolarCharge.API.Application.Invocables;
 using SolarCharge.API.Web.Components;
 
 Log.Logger = new LoggerConfiguration()
@@ -58,11 +58,14 @@ try
     app.Services.UseScheduler(s =>
     {
         var applicationOptions = app.Services.GetRequiredService<IOptions<ApplicationOptions>>();
-        s.Schedule<WriteInverterStatusInvokable>()
+        s.Schedule<WriteInverterStatusInvocable>()
             .Cron(applicationOptions.Value.InverterStatusCheckCron);
 
-        s.Schedule<EvaluateSolarGenerationInvokable>()
+        s.Schedule<ExecuteChargingStrategyInvocable>()
             .Cron(applicationOptions.Value.EvaluateSolarGenerationCron);
+
+        s.Schedule<RefreshTeslaAccessTokenInvocable>()
+            .Cron("00 */2 * * *"); // Runs every two hours on the hour
     });
     
     app.MapStaticAssets();

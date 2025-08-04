@@ -1,6 +1,6 @@
 ﻿using SolarCharge.API.Application.Models;
 
-namespace SolarCharge.API.Application.Services;
+namespace SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
 
 public class UnknownChargeStateStrategy(ILogger<UnknownChargeStateStrategy> logger) : IChargingStrategy
 {
