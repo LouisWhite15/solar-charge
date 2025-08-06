@@ -5,6 +5,7 @@ using SolarCharge.API.Api.Modules;
 using SolarCharge.API.Application;
 using SolarCharge.API.Application.Invocables;
 using SolarCharge.API.Web.Components;
+using Wolverine;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -34,6 +35,11 @@ try
         .AddInverter(builder.Configuration)
         .AddTesla(builder.Configuration)
         .AddChatBot(builder.Configuration);
+    
+    builder.Host.UseWolverine(opts =>
+    {
+        opts.Durability.Mode = DurabilityMode.MediatorOnly;
+    });
     
     builder.Services.AddControllers();
 

@@ -26,9 +26,6 @@ public static class ApplicationExtensions
             configuration.GetSection(FeatureOptions.Features));
         
         services.AddHttpClient();
-
-        // Mediator
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
         
         // Queries
         services.AddScoped<IVehicleQueries, VehicleQueries>();

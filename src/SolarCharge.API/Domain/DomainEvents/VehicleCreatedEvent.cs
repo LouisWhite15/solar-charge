@@ -1,6 +1,4 @@
-﻿using SolarCharge.API.Domain.ValueObjects;
-
-namespace SolarCharge.API.Domain.DomainEvents;
+﻿namespace SolarCharge.API.Domain.DomainEvents;
 
 public class VehicleCreatedEvent : IDomainEvent
 {

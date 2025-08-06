@@ -1,12 +1,12 @@
-﻿using MediatR;
-using SolarCharge.API.Domain.SeedWork;
+﻿using SolarCharge.API.Domain.SeedWork;
 using SolarCharge.API.Infrastructure.DataAccess;
+using Wolverine;
 
 namespace SolarCharge.API.Infrastructure.Extensions;
 
-public static class MediatorExtensions
+public static class MessageBusExtensions
 {
-    public static async Task DispatchDomainEventsAsync(this IMediator mediator, ApplicationContext dbContext)
+    public static async Task DispatchDomainEventsAsync(this IMessageBus bus, ApplicationContext dbContext)
     {
         var domainEntities = dbContext.ChangeTracker
             .Entries<Entity>()
@@ -21,6 +21,6 @@ public static class MediatorExtensions
             .ForEach(entity => entity.Entity.ClearDomainEvents());
 
         foreach (var domainEvent in domainEvents)
-            await mediator.Publish(domainEvent);
+            await bus.PublishAsync(domainEvent);
     }
 }

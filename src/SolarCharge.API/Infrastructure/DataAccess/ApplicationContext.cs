@@ -1,9 +1,9 @@
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SolarCharge.API.Domain.Entities;
 using SolarCharge.API.Domain.SeedWork;
 using SolarCharge.API.Infrastructure.DataAccess.Entities;
 using SolarCharge.API.Infrastructure.Extensions;
+using Wolverine;
 
 namespace SolarCharge.API.Infrastructure.DataAccess;
 
@@ -13,7 +13,7 @@ namespace SolarCharge.API.Infrastructure.DataAccess;
 /// </summary>
 public class ApplicationContext(
     DbContextOptions<ApplicationContext> options,
-    IMediator mediator) 
+    IMessageBus bus) 
     : DbContext(options), IUnitOfWork
 {
     public DbSet<TeslaAuthenticationEntity> TeslaAuthentications { get; set; }
@@ -27,7 +27,7 @@ public class ApplicationContext(
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
     {
-        await mediator.DispatchDomainEventsAsync(this);
+        await bus.DispatchDomainEventsAsync(this);
         
         _ = await base.SaveChangesAsync(cancellationToken);
 

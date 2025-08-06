@@ -1,16 +1,16 @@
-﻿using MediatR;
-using SolarCharge.API.Application.Extensions;
+﻿using SolarCharge.API.Application.Extensions;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Domain.Entities;
 using SolarCharge.API.Domain.Repositories;
+using Wolverine;
 
 namespace SolarCharge.API.Application.Commands;
 
 public class CreateVehicleCommandHandler(
     ILogger<CreateVehicleCommandHandler> logger,
     ITesla tesla,
-    IVehicleRepository repository) : IRequestHandler<CreateVehicleCommand>
+    IVehicleRepository repository) : IWolverineHandler
 {
     public async Task Handle(CreateVehicleCommand command, CancellationToken cancellationToken)
     {

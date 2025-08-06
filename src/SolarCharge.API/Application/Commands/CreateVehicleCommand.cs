@@ -1,5 +1,3 @@
-﻿using MediatR;
+﻿namespace SolarCharge.API.Application.Commands;
 
-namespace SolarCharge.API.Application.Commands;
-
-public sealed record CreateVehicleCommand : IRequest;
+public sealed record CreateVehicleCommand;
