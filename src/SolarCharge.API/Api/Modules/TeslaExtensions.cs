@@ -14,7 +14,7 @@ public static class TeslaExtensions
         services.Configure<TeslaOptions>(
             configuration.GetSection(TeslaOptions.Tesla));
         
-        services.AddTransient<ITeslaAuthentication, TeslaAuthentication>();
+        services.AddTransient<ITeslaAuthentication, TeslaAuthenticationService>();
         services.AddTransient<ITesla, TeslaService>();
         
         services.AddScoped<ITeslaAuthenticationRepository, TeslaAuthenticationRepository>();

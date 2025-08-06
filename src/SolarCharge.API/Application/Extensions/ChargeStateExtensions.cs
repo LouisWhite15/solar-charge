@@ -16,12 +16,16 @@ public static class ChargeStateExtensions
             _ => ChargeStateDto.Unknown
         };
     }
-    
+
     public static ChargeState ToDomain(this ChargeStateDto? chargeState)
     {
-        if (chargeState is null)
-            return ChargeState.Unknown;
-        
+        return chargeState is null ? 
+            ChargeState.Unknown
+            : ToDomain(chargeState.Value);
+    }
+    
+    public static ChargeState ToDomain(this ChargeStateDto chargeState)
+    {
         return chargeState switch
         {
             ChargeStateDto.Unknown => ChargeState.Unknown,

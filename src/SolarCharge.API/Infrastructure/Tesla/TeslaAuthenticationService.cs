@@ -2,7 +2,9 @@
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using MediatR;
 using Microsoft.IdentityModel.Tokens;
+using SolarCharge.API.Application.IntegrationEvents.Events;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Application.Repositories;
@@ -10,10 +12,11 @@ using SolarCharge.API.Infrastructure.Tesla.Dtos;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
 
-public class TeslaAuthentication(
-    ILogger<TeslaAuthentication> logger,
+public class TeslaAuthenticationService(
+    ILogger<TeslaAuthenticationService> logger,
     IHttpClientFactory httpClientFactory,
-    ITeslaAuthenticationRepository teslaAuthenticationRepository)
+    ITeslaAuthenticationRepository teslaAuthenticationRepository,
+    IMediator mediator)
     : ITeslaAuthentication
 {
     public Dictionary<string, string> GetAuthenticationParameters()
@@ -59,7 +62,9 @@ public class TeslaAuthentication(
         }
         
         logger.LogDebug("Persisting Tesla Authentication Tokens");
-        await teslaAuthenticationRepository.SetAsync(new Application.Models.TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
+        await teslaAuthenticationRepository.SetAsync(new TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
+        
+        await mediator.Publish(new TeslaAuthenticationSucceededIntegrationEvent());
 
         return true;
     }
@@ -90,7 +95,7 @@ public class TeslaAuthentication(
         }
         
         logger.LogDebug("Persisting Tesla Authentication Tokens");
-        await teslaAuthenticationRepository.SetAsync(new Application.Models.TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
+        await teslaAuthenticationRepository.SetAsync(new TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
     }
     
     private async Task<TeslaAuthenticationResult?> GetTeslaAuthenticationTokens(string jsonRequest)

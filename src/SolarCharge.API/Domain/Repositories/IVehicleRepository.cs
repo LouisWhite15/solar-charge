@@ -7,4 +7,5 @@ public interface IVehicleRepository
     Task<Vehicle?> GetAsync();
     Task AddAsync(Vehicle vehicle);
     Task UpdateAsync(Vehicle vehicle);
+    Task DeleteAsync(long id);
 }

@@ -55,7 +55,7 @@ public class TeslaService(
             : new VehicleDto(product.Id, product.DisplayName, ChargeStateDto.Unknown);
     }
 
-    public async Task<ChargeStateDto?> GetChargeStateAsync(long vehicleId)
+    public async Task<ChargeStateDto> GetChargeStateAsync(long vehicleId)
     {
         logger.LogTrace("Retrieving charge state from Tesla");
 
@@ -63,7 +63,7 @@ public class TeslaService(
         if (teslaAuthTokens is null)
         {
             logger.LogError("Not authenticated with Tesla");
-            return null;
+            return ChargeStateDto.Unknown;
         }
         
         var httpClient = httpClientFactory.CreateClient("tesla-owner-api");
@@ -74,13 +74,13 @@ public class TeslaService(
         if (!vehicleDataHttpResponse.IsSuccessStatusCode)
         {
             logger.LogWarning("Could not retrieve vehicle data from Tesla. StatusCode: {StatusCode}. This could be because the Tesla is asleep or offline", vehicleDataHttpResponse.StatusCode);
-            return null;
+            return ChargeStateDto.Unknown;
         }
         
         var vehicleDataContent = await vehicleDataHttpResponse.Content.ReadAsStringAsync();
         var vehicleDataResponse = JsonSerializer.Deserialize<VehicleDataResponse>(vehicleDataContent, JsonSerializerOptions);
 
-        return vehicleDataResponse?.Vehicle.ChargeState.ChargingState.ToDto();
+        return vehicleDataResponse?.Vehicle.ChargeState.ChargingState.ToDto() ?? ChargeStateDto.Unknown;
     }
 
     public Task StartChargingAsync()

@@ -3,6 +3,7 @@ using SolarCharge.API.Application;
 using SolarCharge.API.Application.Features;
 using SolarCharge.API.Application.Invocables;
 using SolarCharge.API.Application.Models;
+using SolarCharge.API.Application.Queries;
 using SolarCharge.API.Application.Services;
 using SolarCharge.API.Application.Services.Vehicles;
 using SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
@@ -24,6 +25,12 @@ public static class ApplicationExtensions
             configuration.GetSection(FeatureOptions.Features));
         
         services.AddHttpClient();
+
+        // Mediator
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+        
+        // Queries
+        services.AddScoped<IVehicleQueries, VehicleQueries>();
         
         // Services
         services.AddKeyedTransient<IChargingStrategy, UnknownChargeStateStrategy>(ChargeStateDto.Unknown);
@@ -31,7 +38,6 @@ public static class ApplicationExtensions
         services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(ChargeStateDto.Stopped);
 
         services.AddTransient<IDateTimeOffsetService, DateTimeOffsetService>();
-        services.AddTransient<IVehicleService, VehicleService>();
 
         // Coravel scheduling
         services.AddTransient<WriteInverterStatusInvocable>();

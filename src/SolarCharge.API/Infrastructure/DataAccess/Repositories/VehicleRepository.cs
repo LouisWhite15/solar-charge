@@ -31,4 +31,16 @@ public class VehicleRepository(
         dbContext.Vehicles.Update(vehicle);
         await dbContext.SaveEntitiesAsync();
     }
+
+    public async Task DeleteAsync(long id)
+    {
+        logger.LogTrace("Deleting Vehicle. Id: {Id}", id);
+        
+        var vehicle = await dbContext.Vehicles.FindAsync(id);
+        if (vehicle is null)
+            return;
+
+        dbContext.Remove(vehicle);
+        await dbContext.SaveEntitiesAsync();
+    }
 }
