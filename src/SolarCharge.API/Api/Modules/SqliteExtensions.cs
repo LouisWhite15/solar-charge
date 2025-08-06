@@ -11,7 +11,7 @@ public static class SqliteExtensions
         IConfiguration configuration)
     {
         services.AddDbContext<ApplicationContext>(
-            options => options.UseSqlite(configuration.GetValue<string>("Persistence__ConnectionString")));
+            options => options.UseSqlite(configuration.GetValue<string>("Persistence:ConnectionString")));
         
         return services;
     }
