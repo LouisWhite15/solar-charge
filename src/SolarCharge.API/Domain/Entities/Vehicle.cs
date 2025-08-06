@@ -9,7 +9,7 @@ public sealed record Vehicle : Entity
     public long Id { get; init; }
     public string DisplayName { get; init; }
     public ChargeState ChargeState { get; private set; }
-
+    
     public Vehicle(
         long id,
         string displayName,
