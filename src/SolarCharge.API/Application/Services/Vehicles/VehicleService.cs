@@ -1,6 +1,8 @@
-﻿using SolarCharge.API.Application.Models;
+﻿using SolarCharge.API.Application.Extensions;
+using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
-using SolarCharge.API.Application.Repositories;
+using SolarCharge.API.Domain.Entities;
+using SolarCharge.API.Domain.Repositories;
 
 namespace SolarCharge.API.Application.Services.Vehicles;
 
@@ -9,7 +11,7 @@ public class VehicleService(
     IVehicleRepository vehicleRepository,
     ITesla tesla) : IVehicleService
 {
-    public async Task<Vehicle?> GetVehicleAsync()
+    public async Task<VehicleDto?> GetVehicleAsync()
     {
         logger.LogTrace("Retrieving vehicle");
         
@@ -23,28 +25,30 @@ public class VehicleService(
         logger.LogInformation("Retrieving latest vehicle state from Tesla");
         var chargeState = await tesla.GetChargeStateAsync(vehicle.Id);
         
-        vehicle.ChargeState = chargeState ?? ChargeState.Unknown;
-        await vehicleRepository.SetAsync(vehicle);
+        vehicle.SetChargeState(chargeState.ToDomain());
+        await vehicleRepository.UpdateAsync(vehicle);
 
-        return vehicle;
+        return new VehicleDto(vehicle);
     }
 
-    private async Task<Vehicle?> GetVehicleFromTeslaAsync()
+    private async Task<VehicleDto?> GetVehicleFromTeslaAsync()
     {
-        var vehicleId = await tesla.GetVehicleIdAsync();
-        if (vehicleId is null)
+        var vehicleDto = await tesla.GetVehicleAsync();
+        if (vehicleDto is null)
         {
             logger.LogWarning("Could not retrieve vehicle from Tesla");
             return null;
         }
 
-        var chargeState = await tesla.GetChargeStateAsync(vehicleId.Value);
+        var chargeState = await tesla.GetChargeStateAsync(vehicleDto.Id);
 
         var vehicle = new Vehicle(
-            vehicleId.Value,
-            chargeState ?? ChargeState.Unknown);
+            vehicleDto.Id,
+            vehicleDto.DisplayName,
+            chargeState.ToDomain());
         
-        await vehicleRepository.SetAsync(vehicle);
-        return vehicle;
+        await vehicleRepository.AddAsync(vehicle);
+        
+        return new VehicleDto(vehicle);
     }
 }

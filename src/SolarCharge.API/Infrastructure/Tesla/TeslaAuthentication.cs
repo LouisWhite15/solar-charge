@@ -10,11 +10,11 @@ using SolarCharge.API.Infrastructure.Tesla.Dtos;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
 
-public class TeslaAuthenticationService(
-    ILogger<TeslaAuthenticationService> logger,
+public class TeslaAuthentication(
+    ILogger<TeslaAuthentication> logger,
     IHttpClientFactory httpClientFactory,
     ITeslaAuthenticationRepository teslaAuthenticationRepository)
-    : ITeslaAuthenticationService
+    : ITeslaAuthentication
 {
     public Dictionary<string, string> GetAuthenticationParameters()
     {
@@ -59,7 +59,7 @@ public class TeslaAuthenticationService(
         }
         
         logger.LogDebug("Persisting Tesla Authentication Tokens");
-        await teslaAuthenticationRepository.SetAsync(new TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
+        await teslaAuthenticationRepository.SetAsync(new Application.Models.TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
 
         return true;
     }
@@ -90,7 +90,7 @@ public class TeslaAuthenticationService(
         }
         
         logger.LogDebug("Persisting Tesla Authentication Tokens");
-        await teslaAuthenticationRepository.SetAsync(new TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
+        await teslaAuthenticationRepository.SetAsync(new Application.Models.TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
     }
     
     private async Task<TeslaAuthenticationResult?> GetTeslaAuthenticationTokens(string jsonRequest)

@@ -11,4 +11,7 @@ public class ProductsResponse
 public class Product
 {
     public long Id { get; set; }
+    
+    [JsonPropertyName("display_name")]
+    public string DisplayName { get; set; }
 }

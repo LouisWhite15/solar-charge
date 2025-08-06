@@ -10,7 +10,7 @@ public class RefreshTeslaAccessTokenInvocable(
     ILogger<RefreshTeslaAccessTokenInvocable> logger,
     ITeslaAuthenticationRepository teslaAuthenticationRepository,
     IDateTimeOffsetService dateTimeOffsetService,
-    ITeslaAuthenticationService teslaAuthenticationService) : IInvocable
+    ITeslaAuthentication teslaAuthentication) : IInvocable
 {
     public async Task Invoke()
     {
@@ -33,7 +33,7 @@ public class RefreshTeslaAccessTokenInvocable(
         }
         
         logger.LogDebug("Token will be refreshed");
-        await teslaAuthenticationService.RefreshAsync();
+        await teslaAuthentication.RefreshAsync();
         
         logger.LogTrace("Refresh token job completed");
     }

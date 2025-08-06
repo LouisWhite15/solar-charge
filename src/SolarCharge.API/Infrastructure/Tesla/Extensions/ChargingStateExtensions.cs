@@ -4,11 +4,11 @@ namespace SolarCharge.API.Infrastructure.Tesla.Extensions;
 
 public static class ChargingStateExtensions
 {
-    public static ChargeState ToChargeState(this string chargingState)
+    public static ChargeStateDto ToDto(this string chargingState)
     {
         return chargingState switch
         {
-            _ => ChargeState.Unknown
+            _ => ChargeStateDto.Unknown
         };
     }
 }

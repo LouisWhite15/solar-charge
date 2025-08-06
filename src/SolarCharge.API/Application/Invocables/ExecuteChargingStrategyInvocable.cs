@@ -5,6 +5,7 @@ using SolarCharge.API.Application.Repositories;
 using SolarCharge.API.Application.Services;
 using SolarCharge.API.Application.Services.Vehicles;
 using SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
+using SolarCharge.API.Domain.ValueObjects;
 
 namespace SolarCharge.API.Application.Invocables;
 
@@ -34,7 +35,7 @@ public class ExecuteChargingStrategyInvocable(
         var influxInverterStatusResult = new InverterStatusResult(records);
 
         var vehicle = await vehicleService.GetVehicleAsync();
-        var chargeState = vehicle?.ChargeState ?? ChargeState.Unknown;
+        var chargeState = vehicle?.ChargeState ?? ChargeStateDto.Unknown;
         
         var chargingStrategy = serviceProvider.GetRequiredKeyedService<IChargingStrategy>(chargeState);
         

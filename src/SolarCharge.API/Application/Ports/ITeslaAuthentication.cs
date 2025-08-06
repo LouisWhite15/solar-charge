@@ -1,6 +1,6 @@
 ﻿namespace SolarCharge.API.Application.Ports;
 
-public interface ITeslaAuthenticationService
+public interface ITeslaAuthentication
 {
     /// <summary>
     /// Retrieve the authentication parameters that are required for authentication via the Tesla auth API

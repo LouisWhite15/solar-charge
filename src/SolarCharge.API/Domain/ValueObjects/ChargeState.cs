@@ -1,4 +1,4 @@
-﻿namespace SolarCharge.API.Application.Models;
+﻿namespace SolarCharge.API.Domain.ValueObjects;
 
 public enum ChargeState
 {

@@ -6,6 +6,7 @@ using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Services;
 using SolarCharge.API.Application.Services.Vehicles;
 using SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
+using SolarCharge.API.Domain.ValueObjects;
 
 namespace SolarCharge.API.Api.Modules;
 
@@ -25,9 +26,9 @@ public static class ApplicationExtensions
         services.AddHttpClient();
         
         // Services
-        services.AddKeyedTransient<IChargingStrategy, UnknownChargeStateStrategy>(ChargeState.Unknown);
-        services.AddKeyedTransient<IChargingStrategy, VehicleChargingStrategy>(ChargeState.Charging);
-        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(ChargeState.Stopped);
+        services.AddKeyedTransient<IChargingStrategy, UnknownChargeStateStrategy>(ChargeStateDto.Unknown);
+        services.AddKeyedTransient<IChargingStrategy, VehicleChargingStrategy>(ChargeStateDto.Charging);
+        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(ChargeStateDto.Stopped);
 
         services.AddTransient<IDateTimeOffsetService, DateTimeOffsetService>();
         services.AddTransient<IVehicleService, VehicleService>();

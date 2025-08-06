@@ -14,7 +14,7 @@ public class TeslaAuthenticationRepository(
     IOptions<TeslaOptions> teslaOptions)
     : ITeslaAuthenticationRepository
 {
-    public async Task<TeslaAuthentication?> GetAsync()
+    public async Task<Application.Models.TeslaAuthentication?> GetAsync()
     {
         logger.LogTrace("Retrieving Tesla Authentication");
 
@@ -25,12 +25,12 @@ public class TeslaAuthenticationRepository(
             return null;
         }
         
-        return new TeslaAuthentication(
+        return new Application.Models.TeslaAuthentication(
             AesEncryption.Decrypt(encryptedTeslaAuthentication.EncryptedAccessToken, teslaOptions.Value.EncryptionKey),
             AesEncryption.Decrypt(encryptedTeslaAuthentication.EncryptedRefreshToken, teslaOptions.Value.EncryptionKey));
     }
 
-    public async Task SetAsync(TeslaAuthentication teslaAuthentication)
+    public async Task SetAsync(Application.Models.TeslaAuthentication teslaAuthentication)
     {
         logger.LogTrace("Saving Tesla Authentication");
 

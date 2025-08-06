@@ -4,8 +4,8 @@ namespace SolarCharge.API.Application.Ports;
 
 public interface ITesla
 {
-    Task<long?> GetVehicleIdAsync();
-    Task<ChargeState?> GetChargeStateAsync(long vehicleId);
+    Task<VehicleDto?> GetVehicleAsync();
+    Task<ChargeStateDto?> GetChargeStateAsync(long vehicleId);
     Task StartChargingAsync();
     Task StopChargingAsync();
 }

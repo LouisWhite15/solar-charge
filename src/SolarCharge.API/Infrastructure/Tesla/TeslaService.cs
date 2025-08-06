@@ -4,8 +4,10 @@ using System.Text.Json.Serialization;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Application.Repositories;
+using SolarCharge.API.Domain.ValueObjects;
 using SolarCharge.API.Infrastructure.Tesla.Dtos;
 using SolarCharge.API.Infrastructure.Tesla.Extensions;
+using ChargeStateDto = SolarCharge.API.Application.Models.ChargeStateDto;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
 
@@ -22,7 +24,7 @@ public class TeslaService(
         NumberHandling = JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString
     };
     
-    public async Task<long?> GetVehicleIdAsync()
+    public async Task<VehicleDto?> GetVehicleAsync()
     {
         logger.LogTrace("Retrieving vehicle id from Tesla");
 
@@ -47,10 +49,13 @@ public class TeslaService(
         var productsContent = await productsHttpResponse.Content.ReadAsStringAsync();
         var productsResponse = JsonSerializer.Deserialize<ProductsResponse>(productsContent, JsonSerializerOptions);
 
-        return productsResponse?.Products.FirstOrDefault()?.Id;
+        var product = productsResponse?.Products.FirstOrDefault();
+        return product is null
+            ? null
+            : new VehicleDto(product.Id, product.DisplayName, ChargeStateDto.Unknown);
     }
 
-    public async Task<ChargeState?> GetChargeStateAsync(long vehicleId)
+    public async Task<ChargeStateDto?> GetChargeStateAsync(long vehicleId)
     {
         logger.LogTrace("Retrieving charge state from Tesla");
 
@@ -75,7 +80,7 @@ public class TeslaService(
         var vehicleDataContent = await vehicleDataHttpResponse.Content.ReadAsStringAsync();
         var vehicleDataResponse = JsonSerializer.Deserialize<VehicleDataResponse>(vehicleDataContent, JsonSerializerOptions);
 
-        return vehicleDataResponse?.Vehicle.ChargeState.ChargingState.ToChargeState();
+        return vehicleDataResponse?.Vehicle.ChargeState.ChargingState.ToDto();
     }
 
     public Task StartChargingAsync()

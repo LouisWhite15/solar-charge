@@ -78,7 +78,7 @@
 
 @code {
     [Inject]
-    private ITeslaAuthenticationService TeslaAuthenticationService { get; set; }
+    private ITeslaAuthentication TeslaAuthentication { get; set; }
 
     private Dictionary<string, string> AuthenticationParameters { get; set; }
     private bool? _authenticationSuccessful;
@@ -96,7 +96,7 @@
 
     protected override Task OnInitializedAsync()
     {
-        AuthenticationParameters = TeslaAuthenticationService.GetAuthenticationParameters();
+        AuthenticationParameters = TeslaAuthentication.GetAuthenticationParameters();
         _teslaLogonUrl = GetTeslaLogonUrl(AuthenticationParameters);
 
         return Task.CompletedTask;
@@ -107,7 +107,7 @@
         if (UrlWithCode is null)
             return;
         
-        _authenticationSuccessful = await TeslaAuthenticationService.AuthenticateAsync(UrlWithCode, AuthenticationParameters);
+        _authenticationSuccessful = await TeslaAuthentication.AuthenticateAsync(UrlWithCode, AuthenticationParameters);
     }
 
     private static void SubmitProvidedTokens()
