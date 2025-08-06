@@ -1,6 +1,6 @@
 ﻿using SolarCharge.API.Application.Models;
 
-namespace SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
+namespace SolarCharge.API.Application.Services.ChargingStrategies;
 
 public interface IChargingStrategy
 {

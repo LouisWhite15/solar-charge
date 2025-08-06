@@ -2,12 +2,7 @@ using Coravel.Invocable;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Application.Queries;
-using SolarCharge.API.Application.Repositories;
-using SolarCharge.API.Application.Services;
-using SolarCharge.API.Application.Services.Vehicles;
-using SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
-using SolarCharge.API.Domain.Repositories;
-using SolarCharge.API.Domain.ValueObjects;
+using SolarCharge.API.Application.Services.ChargingStrategies;
 
 namespace SolarCharge.API.Application.Invocables;
 

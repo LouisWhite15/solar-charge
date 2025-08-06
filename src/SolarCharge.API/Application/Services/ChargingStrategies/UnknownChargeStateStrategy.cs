@@ -1,4 +1,5 @@
 ﻿using SolarCharge.API.Application.Models;
+using SolarCharge.API.Application.Services.ChargingStrategies;
 
 namespace SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
 

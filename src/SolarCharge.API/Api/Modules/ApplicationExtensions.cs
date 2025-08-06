@@ -5,6 +5,7 @@ using SolarCharge.API.Application.Invocables;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Queries;
 using SolarCharge.API.Application.Services;
+using SolarCharge.API.Application.Services.ChargingStrategies;
 using SolarCharge.API.Application.Services.Vehicles;
 using SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
 using SolarCharge.API.Domain.ValueObjects;

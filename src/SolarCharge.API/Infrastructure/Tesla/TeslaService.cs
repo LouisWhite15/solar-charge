@@ -80,7 +80,11 @@ public class TeslaService(
         var vehicleDataContent = await vehicleDataHttpResponse.Content.ReadAsStringAsync();
         var vehicleDataResponse = JsonSerializer.Deserialize<VehicleDataResponse>(vehicleDataContent, JsonSerializerOptions);
 
-        return vehicleDataResponse?.Vehicle.ChargeState.ChargingState.ToDto() ?? ChargeStateDto.Unknown;
+        var teslaChargingState = vehicleDataResponse?.Vehicle.ChargeState.ChargingState;
+        logger.LogDebug("Charging retrieved state from Tesla: {TeslaChargingState}",
+            string.IsNullOrEmpty(teslaChargingState) ? "null" : teslaChargingState);
+        
+        return teslaChargingState?.ToDto() ?? ChargeStateDto.Unknown;
     }
 
     public Task StartChargingAsync()

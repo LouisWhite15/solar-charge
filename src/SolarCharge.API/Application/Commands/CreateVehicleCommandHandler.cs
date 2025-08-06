@@ -14,10 +14,12 @@ public class CreateVehicleCommandHandler(
 {
     public async Task Handle(CreateVehicleCommand command, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Handling {CommandType}", nameof(CreateVehicleCommand));
+        
         var vehicleDetails = await tesla.GetVehicleAsync();
         if (vehicleDetails is null)
         {
-            logger.LogError("Vehicle could not be retrieved from Telsa");
+            logger.LogError("Vehicle could not be retrieved from Tesla");
             return;
         }
 
@@ -39,6 +41,10 @@ public class CreateVehicleCommandHandler(
             await repository.DeleteAsync(existingVehicle.Id);
         }
 
+        logger.LogInformation("Creating vehicle. Id: {Id}. DisplayName: {DisplayName}",
+            vehicleDetails.Id,
+            vehicleDetails.DisplayName);
+        
         var vehicle = new Vehicle(vehicleDetails.Id, vehicleDetails.DisplayName, chargeState.ToDomain());
         await repository.AddAsync(vehicle);
     }
