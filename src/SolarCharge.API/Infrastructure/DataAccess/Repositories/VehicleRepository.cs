@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SolarCharge.API.Domain.Entities;
 using SolarCharge.API.Domain.Repositories;
+using SolarCharge.API.Domain.SeedWork;
 
 namespace SolarCharge.API.Infrastructure.DataAccess.Repositories;
 
@@ -9,11 +10,13 @@ public class VehicleRepository(
     ApplicationContext dbContext)
     : IVehicleRepository
 {
+    public IUnitOfWork UnitOfWork => dbContext;
+    
     public async Task<Vehicle?> GetAsync()
     {
         logger.LogTrace("Retrieving Vehicle");
 
-        return await dbContext.Vehicles.FirstOrDefaultAsync();
+        return await dbContext.Vehicles.SingleOrDefaultAsync();
     }
 
     public async Task AddAsync(Vehicle vehicle)
@@ -21,15 +24,14 @@ public class VehicleRepository(
         logger.LogTrace("Saving Vehicle. Id: {Id}", vehicle.Id);
 
         await dbContext.Vehicles.AddAsync(vehicle);
-        await dbContext.SaveEntitiesAsync();
     }
 
-    public async Task UpdateAsync(Vehicle vehicle)
+    public Task UpdateAsync(Vehicle vehicle)
     {
         logger.LogTrace("Updating Vehicle. Id: {Id}", vehicle.Id);
         
         dbContext.Vehicles.Update(vehicle);
-        await dbContext.SaveEntitiesAsync();
+        return Task.CompletedTask;
     }
 
     public async Task DeleteAsync(long id)
@@ -41,6 +43,5 @@ public class VehicleRepository(
             return;
 
         dbContext.Remove(vehicle);
-        await dbContext.SaveEntitiesAsync();
     }
 }

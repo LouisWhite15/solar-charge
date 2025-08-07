@@ -1,8 +1,9 @@
 ﻿using SolarCharge.API.Domain.Entities;
+using SolarCharge.API.Domain.SeedWork;
 
 namespace SolarCharge.API.Domain.Repositories;
 
-public interface IVehicleRepository
+public interface IVehicleRepository : IRepository<Vehicle>
 {
     Task<Vehicle?> GetAsync();
     Task AddAsync(Vehicle vehicle);

@@ -10,9 +10,10 @@ namespace SolarCharge.API.Application.Commands;
 public class CreateVehicleCommandHandler(
     ILogger<CreateVehicleCommandHandler> logger,
     ITesla tesla,
-    IVehicleRepository repository) : IWolverineHandler
+    IVehicleRepository repository)
+    : IWolverineHandler
 {
-    public async Task Handle(CreateVehicleCommand command, CancellationToken cancellationToken)
+    public async Task Handle(CreateVehicleCommand _)
     {
         logger.LogInformation("Handling {CommandType}", nameof(CreateVehicleCommand));
         
@@ -29,15 +30,13 @@ public class CreateVehicleCommandHandler(
             logger.LogWarning("Could not retrieve charge state for Vehicle. Id: {Id}. DisplayName: {DisplayName}",
                 vehicleDetails.Id,
                 vehicleDetails.DisplayName);
-            return;
         }
 
         var existingVehicle = await repository.GetAsync();
         if (existingVehicle is not null && existingVehicle.Id != vehicleDetails.Id)
         {
-            logger.LogInformation("Another vehicle already exists. Removing and adding new vehicle. Existing Id: {ExistingId}. New Id: {NewId}",
-                existingVehicle.Id,
-                vehicleDetails.Id);
+            logger.LogInformation("Another vehicle already exists. Removing existing vehicle. Existing Vehicle Id: {ExistingVehicleId}",
+                existingVehicle.Id);
             await repository.DeleteAsync(existingVehicle.Id);
         }
 
@@ -46,6 +45,8 @@ public class CreateVehicleCommandHandler(
             vehicleDetails.DisplayName);
         
         var vehicle = new Vehicle(vehicleDetails.Id, vehicleDetails.DisplayName, chargeState.ToDomain());
+        
         await repository.AddAsync(vehicle);
+        await repository.UnitOfWork.SaveEntitiesAsync();
     }
 }

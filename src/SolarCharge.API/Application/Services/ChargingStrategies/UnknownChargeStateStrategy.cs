@@ -1,12 +1,18 @@
-﻿using SolarCharge.API.Application.Models;
-using SolarCharge.API.Application.Services.ChargingStrategies;
+﻿using SolarCharge.API.Application.Commands;
+using SolarCharge.API.Application.Models;
+using Wolverine;
 
-namespace SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
+namespace SolarCharge.API.Application.Services.ChargingStrategies;
 
-public class UnknownChargeStateStrategy(ILogger<UnknownChargeStateStrategy> logger) : IChargingStrategy
+public class UnknownChargeStateStrategy(
+    ILogger<UnknownChargeStateStrategy> logger,
+    IMessageBus bus)
+    : IChargingStrategy
 {
-    public Task Evaluate(InverterStatusResult inverterStatusResult)
+    public async Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
     {
+        logger.LogInformation("Evaluating UnknownChargeStateStrategy");
+        
         var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;
 
@@ -24,7 +30,8 @@ public class UnknownChargeStateStrategy(ILogger<UnknownChargeStateStrategy> logg
         {
             logger.LogDebug("PV generation is increasing for the period. Most recent reading: {PV}", mostRecentStatus.Photovoltaic);
         }
-
-        return Task.CompletedTask;
+        
+        logger.LogInformation("Sending SetChargeStateCommand");
+        await bus.InvokeAsync(new SetChargeStateCommand(vehicle.Id));
     }
 }

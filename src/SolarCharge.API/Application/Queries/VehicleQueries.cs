@@ -9,7 +9,9 @@ public class VehicleQueries(IVehicleRepository vehicleRepository)
     public async Task<VehicleDto?> GetVehicleAsync()
     {
         var vehicle = await vehicleRepository.GetAsync();
-        
-        return vehicle is null ? null : new VehicleDto(vehicle);
+
+        return vehicle is not null
+            ? new VehicleDto(vehicle)
+            : null;
     }
 }

@@ -21,6 +21,8 @@ public static class MessageBusExtensions
             .ForEach(entity => entity.Entity.ClearDomainEvents());
 
         foreach (var domainEvent in domainEvents)
-            await bus.PublishAsync(domainEvent);
+        {
+            await bus.InvokeAsync(domainEvent);
+        }
     }
 }

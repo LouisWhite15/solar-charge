@@ -64,7 +64,7 @@ public class TeslaAuthenticationService(
         logger.LogDebug("Persisting Tesla Authentication Tokens");
         await teslaAuthenticationRepository.SetAsync(new TeslaAuthentication(tokens.AccessToken, tokens.RefreshToken));
         
-        await bus.PublishAsync(new TeslaAuthenticationSucceededIntegrationEvent());
+        await bus.InvokeAsync(new TeslaAuthenticationSucceededIntegrationEvent());
 
         return true;
     }

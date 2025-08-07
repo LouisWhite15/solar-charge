@@ -1,12 +1,14 @@
 ﻿using SolarCharge.API.Application.Models;
-using SolarCharge.API.Application.Services.ChargingStrategies;
 
-namespace SolarCharge.API.Application.Services.Vehicles.ChargingStrategies;
+namespace SolarCharge.API.Application.Services.ChargingStrategies;
 
-public class VehicleNotChargingStrategy : IChargingStrategy
+public class VehicleNotChargingStrategy(ILogger<VehicleNotChargingStrategy> logger)
+    : IChargingStrategy
 {
-    public Task Evaluate(InverterStatusResult inverterStatusResult)
+    public Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Evaluating VehicleNotChargingStrategy");
+
+        return Task.CompletedTask;
     }
 }

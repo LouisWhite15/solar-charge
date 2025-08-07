@@ -32,11 +32,15 @@ public class ExecuteChargingStrategyInvocable(
         var influxInverterStatusResult = new InverterStatusResult(records);
 
         var vehicle = await vehicleQueries.GetVehicleAsync();
-        var chargeState = vehicle?.ChargeState ?? ChargeStateDto.Unknown;
+        if (vehicle is null)
+        {
+            logger.LogWarning("Vehicle not found. No charging strategy will be executed");
+            return;
+        }
         
-        var chargingStrategy = serviceProvider.GetRequiredKeyedService<IChargingStrategy>(chargeState);
+        var chargingStrategy = serviceProvider.GetRequiredKeyedService<IChargingStrategy>(vehicle.ChargeState);
         
-        logger.LogDebug("Executing charging strategy for {ChargeState}", chargeState);
-        await chargingStrategy.Evaluate(influxInverterStatusResult);
+        logger.LogDebug("Executing charging strategy. ChargeState: {ChargeState}. VehicleId: {VehicleId}", vehicle.ChargeState, vehicle.Id);
+        await chargingStrategy.Evaluate(influxInverterStatusResult, vehicle);
     }
 }

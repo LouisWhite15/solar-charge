@@ -9,7 +9,7 @@ public class TeslaAuthenticationSucceededIntegrationEventHandler(
     IMessageBus bus)
     : IWolverineHandler
 {
-    public async Task Handle(TeslaAuthenticationSucceededIntegrationEvent _, CancellationToken cancellationToken)
+    public async Task Handle(TeslaAuthenticationSucceededIntegrationEvent _)
     {
         logger.LogInformation("Handling {EventType}", nameof(TeslaAuthenticationSucceededIntegrationEvent));
 
@@ -17,6 +17,6 @@ public class TeslaAuthenticationSucceededIntegrationEventHandler(
         
         logger.LogInformation("Sending {CommandType}", nameof(CreateVehicleCommand));
 
-        await bus.SendAsync(command);
+        await bus.InvokeAsync(command);
     }
 }

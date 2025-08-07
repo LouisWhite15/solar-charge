@@ -8,9 +8,10 @@ namespace SolarCharge.API.Application.Commands;
 public class SetChargeStateCommandHandler(
     ILogger<SetChargeStateCommandHandler> logger,
     ITesla tesla,
-    IVehicleRepository repository) : IWolverineHandler
+    IVehicleRepository repository)
+    : IWolverineHandler
 {
-    public async Task Handle(SetChargeStateCommand command, CancellationToken cancellationToken)
+    public async Task Handle(SetChargeStateCommand command)
     {
         logger.LogTrace("Handling {CommandType}", nameof(SetChargeStateCommand));
         
@@ -31,6 +32,8 @@ public class SetChargeStateCommandHandler(
         var chargeState = await tesla.GetChargeStateAsync(command.VehicleId);
         
         vehicle.SetChargeState(chargeState.ToDomain());
+        
         await repository.UpdateAsync(vehicle);
+        await repository.UnitOfWork.SaveEntitiesAsync();
     }
 }

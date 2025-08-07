@@ -4,5 +4,5 @@ namespace SolarCharge.API.Application.Services.ChargingStrategies;
 
 public interface IChargingStrategy
 {
-    Task Evaluate(InverterStatusResult inverterStatusResult);
+    Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle);
 }
