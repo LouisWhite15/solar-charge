@@ -31,7 +31,7 @@ public class UnknownChargeStateStrategy(
             logger.LogDebug("PV generation is increasing for the period. Most recent reading: {PV}", mostRecentStatus.Photovoltaic);
         }
         
-        logger.LogInformation("Sending SetChargeStateCommand");
+        logger.LogInformation("Sending {CommandName}",  nameof(UpdateStateCommand));
         await bus.InvokeAsync(new UpdateStateCommand(vehicle.Id));
     }
 }
