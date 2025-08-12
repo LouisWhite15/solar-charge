@@ -1,19 +1,21 @@
 ﻿using SolarCharge.API.Application.Extensions;
+using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Domain.Repositories;
+using SolarCharge.API.Domain.ValueObjects;
 using Wolverine;
 
 namespace SolarCharge.API.Application.Commands;
 
-public class SetChargeStateCommandHandler(
-    ILogger<SetChargeStateCommandHandler> logger,
+public class UpdateStateCommandHandler(
+    ILogger<UpdateStateCommandHandler> logger,
     ITesla tesla,
     IVehicleRepository repository)
     : IWolverineHandler
 {
-    public async Task Handle(SetChargeStateCommand command)
+    public async Task Handle(UpdateStateCommand command)
     {
-        logger.LogTrace("Handling {CommandType}", nameof(SetChargeStateCommand));
+        logger.LogTrace("Handling {CommandType}", nameof(UpdateStateCommand));
         
         var vehicle = await repository.GetAsync();
         if (vehicle is null)
@@ -29,9 +31,9 @@ public class SetChargeStateCommandHandler(
         }
         
         logger.LogInformation("Setting ChargeState for Vehicle. Id: {Id}", command.VehicleId);
-        var chargeState = await tesla.GetChargeStateAsync(command.VehicleId);
+        var vehicleState = await tesla.GetVehicleStateAsync(new VehicleDto(vehicle));
         
-        vehicle.SetChargeState(chargeState.ToDomain());
+        vehicle.SetState(vehicleState?.State.ToDomain() ?? VehicleState.Unknown);
         
         await repository.UpdateAsync(vehicle);
         await repository.UnitOfWork.SaveEntitiesAsync();

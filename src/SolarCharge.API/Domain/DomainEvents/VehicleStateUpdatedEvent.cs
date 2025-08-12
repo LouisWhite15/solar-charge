@@ -2,8 +2,8 @@
 
 namespace SolarCharge.API.Domain.DomainEvents;
 
-public class VehicleChargeStateUpdatedEvent : IDomainEvent
+public class VehicleStateUpdatedEvent : IDomainEvent
 {
     public long Id { get; init; }
-    public ChargeState ChargeState { get; init; }
+    public VehicleState State { get; init; }
 }

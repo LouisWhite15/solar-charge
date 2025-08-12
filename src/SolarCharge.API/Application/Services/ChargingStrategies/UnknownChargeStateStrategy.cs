@@ -32,6 +32,6 @@ public class UnknownChargeStateStrategy(
         }
         
         logger.LogInformation("Sending SetChargeStateCommand");
-        await bus.InvokeAsync(new SetChargeStateCommand(vehicle.Id));
+        await bus.InvokeAsync(new UpdateStateCommand(vehicle.Id));
     }
 }

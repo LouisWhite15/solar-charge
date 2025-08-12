@@ -38,9 +38,9 @@ public class ExecuteChargingStrategyInvocable(
             return;
         }
         
-        var chargingStrategy = serviceProvider.GetRequiredKeyedService<IChargingStrategy>(vehicle.ChargeState);
+        var chargingStrategy = serviceProvider.GetRequiredKeyedService<IChargingStrategy>(vehicle.State);
         
-        logger.LogDebug("Executing charging strategy. ChargeState: {ChargeState}. VehicleId: {VehicleId}", vehicle.ChargeState, vehicle.Id);
+        logger.LogDebug("Executing charging strategy. State: {ChargeState}. VehicleId: {VehicleId}", vehicle.State, vehicle.Id);
         await chargingStrategy.Evaluate(influxInverterStatusResult, vehicle);
     }
 }

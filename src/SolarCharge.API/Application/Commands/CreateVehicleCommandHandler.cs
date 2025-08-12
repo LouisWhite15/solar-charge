@@ -3,6 +3,7 @@ using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Domain.Entities;
 using SolarCharge.API.Domain.Repositories;
+using SolarCharge.API.Domain.ValueObjects;
 using Wolverine;
 
 namespace SolarCharge.API.Application.Commands;
@@ -24,10 +25,10 @@ public class CreateVehicleCommandHandler(
             return;
         }
 
-        var chargeState = await tesla.GetChargeStateAsync(vehicleDetails.Id);
-        if (chargeState is ChargeStateDto.Unknown)
+        var vehicleState = await tesla.GetVehicleStateAsync(vehicleDetails);
+        if (vehicleState is null)
         {
-            logger.LogWarning("Could not retrieve charge state for Vehicle. Id: {Id}. DisplayName: {DisplayName}",
+            logger.LogWarning("Could not retrieve state for Vehicle. Id: {Id}. DisplayName: {DisplayName}",
                 vehicleDetails.Id,
                 vehicleDetails.DisplayName);
         }
@@ -44,7 +45,10 @@ public class CreateVehicleCommandHandler(
             vehicleDetails.Id,
             vehicleDetails.DisplayName);
         
-        var vehicle = new Vehicle(vehicleDetails.Id, vehicleDetails.DisplayName, chargeState.ToDomain());
+        var vehicle = new Vehicle(
+            vehicleDetails.Id,
+            vehicleDetails.DisplayName,
+            vehicleState?.State.ToDomain() ?? VehicleState.Unknown);
         
         await repository.AddAsync(vehicle);
         await repository.UnitOfWork.SaveEntitiesAsync();

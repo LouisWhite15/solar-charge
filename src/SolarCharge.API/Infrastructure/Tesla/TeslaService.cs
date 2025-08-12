@@ -4,10 +4,7 @@ using System.Text.Json.Serialization;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Application.Repositories;
-using SolarCharge.API.Domain.ValueObjects;
 using SolarCharge.API.Infrastructure.Tesla.Dtos;
-using SolarCharge.API.Infrastructure.Tesla.Extensions;
-using ChargeStateDto = SolarCharge.API.Application.Models.ChargeStateDto;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
 
@@ -52,10 +49,10 @@ public class TeslaService(
         var product = productsResponse?.Products.FirstOrDefault();
         return product is null
             ? null
-            : new VehicleDto(product.Id, product.DisplayName, ChargeStateDto.Unknown);
+            : new VehicleDto(product.Id, product.DisplayName, VehicleStateDto.Unknown);
     }
 
-    public async Task<ChargeStateDto> GetChargeStateAsync(long vehicleId)
+    public async Task<VehicleDto?> GetVehicleStateAsync(VehicleDto vehicle)
     {
         logger.LogTrace("Retrieving charge state from Tesla");
 
@@ -63,28 +60,32 @@ public class TeslaService(
         if (teslaAuthTokens is null)
         {
             logger.LogError("Not authenticated with Tesla");
-            return ChargeStateDto.Unknown;
+            return null;
         }
         
         var httpClient = httpClientFactory.CreateClient("tesla-owner-api");
         httpClient.BaseAddress = new Uri("https://owner-api.teslamotors.com");
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", teslaAuthTokens.AccessToken);
 
-        var vehicleDataHttpResponse = await httpClient.GetAsync($"/api/1/vehicles/{vehicleId}/vehicle_data");
-        if (!vehicleDataHttpResponse.IsSuccessStatusCode)
+        var vehicleHttpResponse = await httpClient.GetAsync($"/api/1/vehicles/{vehicle.Id}");
+        if (!vehicleHttpResponse.IsSuccessStatusCode)
         {
-            logger.LogWarning("Could not retrieve vehicle data from Tesla. StatusCode: {StatusCode}. This could be because the Tesla is asleep or offline", vehicleDataHttpResponse.StatusCode);
-            return ChargeStateDto.Unknown;
+            logger.LogWarning("Could not retrieve vehicle data from Tesla. StatusCode: {StatusCode}", vehicleHttpResponse.StatusCode);
+            return null;
         }
         
-        var vehicleDataContent = await vehicleDataHttpResponse.Content.ReadAsStringAsync();
-        var vehicleDataResponse = JsonSerializer.Deserialize<VehicleDataResponse>(vehicleDataContent, JsonSerializerOptions);
-
-        var teslaChargingState = vehicleDataResponse?.Vehicle.ChargeState.ChargingState;
-        logger.LogDebug("Charging retrieved state from Tesla: {TeslaChargingState}",
-            string.IsNullOrEmpty(teslaChargingState) ? "null" : teslaChargingState);
+        var vehicleContent = await vehicleHttpResponse.Content.ReadAsStringAsync();
+        var vehicleResponse = JsonSerializer.Deserialize<VehicleResponse>(vehicleContent, JsonSerializerOptions);
+        if (vehicleResponse?.Response is null)
+        {
+            logger.LogWarning("Could not parse vehicle API response");
+            return null;
+        }
         
-        return teslaChargingState?.ToDto() ?? ChargeStateDto.Unknown;
+        logger.LogDebug("State retrieved from Tesla. Id: {Id}. State: {State}", 
+            vehicleResponse.Response.Id, vehicleResponse.Response.State);
+
+        return new VehicleDto(vehicleResponse);
     }
 
     public Task StartChargingAsync()

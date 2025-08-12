@@ -8,38 +8,47 @@ public sealed record Vehicle : Entity
 {
     public long Id { get; init; }
     public string DisplayName { get; init; }
-    public ChargeState ChargeState { get; private set; }
+    public VehicleState State { get; set; }
     
     public Vehicle(
         long id,
         string displayName,
-        ChargeState chargeState = ChargeState.Unknown)
+        VehicleState state = VehicleState.Unknown)
     {
         Id = id;
         DisplayName = displayName;
-        ChargeState = chargeState;
+        State = state;
         
         AddDomainEvent(new VehicleCreatedEvent
         {
             Id = Id,
             DisplayName = DisplayName,
-            IsCharging = ChargeState is ChargeState.Charging
+            State = State
         });
     }
 
-    public void SetChargeState(ChargeState chargeState)
+    public void SetState(VehicleState vehicleState)
     {
-        if (ChargeState == chargeState)
+        // Do not trigger state update if the state isn't updating
+        if (State == vehicleState)
+        {
+            return;
+        }
+
+        // Do not update the vehicle state if we knew what it was and now we don't
+        // i.e., store the last known value
+        if (State is not VehicleState.Unknown &&
+            vehicleState is VehicleState.Unknown)
         {
             return;
         }
         
-        ChargeState = chargeState;
+        State = vehicleState;
         
-        AddDomainEvent(new VehicleChargeStateUpdatedEvent
+        AddDomainEvent(new VehicleStateUpdatedEvent
         {
             Id = Id,
-            ChargeState = ChargeState
+            State = State
         });
     }
 }

@@ -28,9 +28,11 @@ public static class ApplicationExtensions
         services.AddScoped<IVehicleQueries, VehicleQueries>();
         
         // Services
-        services.AddKeyedTransient<IChargingStrategy, UnknownChargeStateStrategy>(ChargeStateDto.Unknown);
-        services.AddKeyedTransient<IChargingStrategy, VehicleChargingStrategy>(ChargeStateDto.Charging);
-        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(ChargeStateDto.Stopped);
+        services.AddKeyedTransient<IChargingStrategy, UnknownChargeStateStrategy>(VehicleStateDto.Unknown);
+        services.AddKeyedTransient<IChargingStrategy, VehicleChargingStrategy>(VehicleStateDto.Charging);
+        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Idle);
+        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Offline);
+        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Online);
 
         services.AddTransient<IDateTimeOffsetService, DateTimeOffsetService>();
 

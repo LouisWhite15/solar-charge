@@ -3,10 +3,10 @@ using Wolverine;
 
 namespace SolarCharge.API.Application.DomainEventHandlers;
 
-public class VehicleChargeStateUpdatedEventHandler(ILogger<VehicleChargeStateUpdatedEventHandler> logger)
+public class VehicleStateUpdatedEventHandler(ILogger<VehicleStateUpdatedEventHandler> logger)
     : IWolverineHandler
 {
-    public Task Handle(VehicleChargeStateUpdatedEvent @event)
+    public Task Handle(VehicleStateUpdatedEventHandler @event)
     {
         return Task.CompletedTask;
     }
