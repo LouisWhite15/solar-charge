@@ -1,7 +1,6 @@
-using Coravel;
 using SolarCharge.API.Application;
 using SolarCharge.API.Application.Features;
-using SolarCharge.API.Application.Invocables;
+using SolarCharge.API.Application.HostedServices;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Queries;
 using SolarCharge.API.Application.Services;
@@ -36,11 +35,10 @@ public static class ApplicationExtensions
 
         services.AddTransient<IDateTimeOffsetService, DateTimeOffsetService>();
 
-        // Coravel scheduling
-        services.AddTransient<WriteInverterStatusInvocable>();
-        services.AddTransient<ExecuteChargingStrategyInvocable>();
-        services.AddTransient<RefreshTeslaAccessTokenInvocable>();
-        services.AddScheduler();
+        // Hosted Services
+        services.AddHostedService<WriteInverterStatusHostedService>();
+        services.AddHostedService<ExecuteChargingStrategyHostedService>();
+        services.AddHostedService<RefreshTeslaAccessTokenHostedService>();
         
         return services;
     }

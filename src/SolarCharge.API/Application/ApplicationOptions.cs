@@ -4,6 +4,7 @@ public class ApplicationOptions
 {
     public const string Application = "Application";
 
-    public string InverterStatusCheckCron { get; set; } = "*/2 * * * *"; // Every 2 minutes by default
-    public string EvaluateSolarGenerationCron { get; set; } = "*/10 * * * *"; // Every 10 minutes by default
+    public int InverterStatusCheckFrequencySeconds { get; set; } = 120; // Every 2 minutes by default
+    public int EvaluateSolarGenerationFrequencySeconds { get; set; } = 600; // Every 10 minutes by default
+    public int RefreshTeslaAccessTokenFrequencySeconds { get; set; } = 7200; // Every 2 hours by default
 }

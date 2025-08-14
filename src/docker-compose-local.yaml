@@ -30,12 +30,14 @@ services:
       Features__IsChatBotEnabled: true
       Inverter__Type: "Fronius"
       Inverter__Url: "http://192.168.1.51"
-      InfluxDb__Url: http://influxdb2:8086
+      InfluxDb__Url: "http://influxdb2:8086"
       InfluxDb__Token: AdminToken0==
-      Application__InverterStatusCheckCron: "*/2 * * * *"
-      Application__EvaluateSolarGenerationCron: "*/10 * * * *"
+      Application__InverterStatusCheckFrequencySeconds: 120
+      Application__EvaluateSolarGenerationFrequencySeconds: 600
+      Application__RefreshTeslaAccessTokenFrequencySeconds: 7200
       Persistence__ConnectionString: "Data Source=/persistence/app.db"
       ChatBot__Url: "http://solar-charge-telegram"
+      Tesla__EncryptionKey: "YOUR_SECURE_ENCRYPTION_KEY"
     volumes:
       - app-data:/persistence
     depends_on:

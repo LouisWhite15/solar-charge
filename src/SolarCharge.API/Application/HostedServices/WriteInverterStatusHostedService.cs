@@ -1,17 +1,18 @@
-using Coravel.Invocable;
 using InfluxDB.Client.Api.Domain;
 using InfluxDB.Client.Writes;
+using Microsoft.Extensions.Options;
 using SolarCharge.API.Application.Ports;
 
-namespace SolarCharge.API.Application.Invocables;
+namespace SolarCharge.API.Application.HostedServices;
 
-public class WriteInverterStatusInvocable(
-    ILogger<WriteInverterStatusInvocable> logger,
+public class WriteInverterStatusHostedService(
+    ILogger<WriteInverterStatusHostedService> logger,
     IInfluxDb influxDb,
-    IInverter inverter)
-    : IInvocable
+    IInverter inverter,
+    IOptions<ApplicationOptions> applicationOptions)
+    : AsyncTimedHostedService(logger, applicationOptions.Value.InverterStatusCheckFrequencySeconds)
 {
-    public async Task Invoke()
+    protected override async Task DoWorkAsync()
     {
         logger.LogDebug("Retrieving inverter status");
         var inverterStatus = await inverter.GetAsync();
@@ -38,6 +39,5 @@ public class WriteInverterStatusInvocable(
 
             write.WritePoints(new [] { pvPoint, gridPoint, loadPoint }, "home", "solar-charge");
         });
-        
     }
 }

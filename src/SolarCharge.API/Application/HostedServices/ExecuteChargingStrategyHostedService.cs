@@ -1,19 +1,20 @@
-using Coravel.Invocable;
+using Microsoft.Extensions.Options;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Application.Queries;
 using SolarCharge.API.Application.Services.ChargingStrategies;
 
-namespace SolarCharge.API.Application.Invocables;
+namespace SolarCharge.API.Application.HostedServices;
 
-public class ExecuteChargingStrategyInvocable(
-    ILogger<ExecuteChargingStrategyInvocable> logger,
-    IInfluxDb influxDb,
+public class ExecuteChargingStrategyHostedService(
+    ILogger<ExecuteChargingStrategyHostedService> logger,
+    IServiceScopeFactory serviceScopeFactory,
     IServiceProvider serviceProvider,
-    IVehicleQueries vehicleQueries)
-    : IInvocable
+    IInfluxDb influxDb,
+    IOptions<ApplicationOptions> applicationOptions)
+    : AsyncTimedHostedService(logger, applicationOptions.Value.EvaluateSolarGenerationFrequencySeconds)
 {
-    public async Task Invoke()
+    protected override async Task DoWorkAsync()
     {
         logger.LogDebug("Evaluating solar generation");
         
@@ -31,6 +32,9 @@ public class ExecuteChargingStrategyInvocable(
         var records = tables.SelectMany(t => t.Records);
         var influxInverterStatusResult = new InverterStatusResult(records);
 
+        using var scope = serviceScopeFactory.CreateScope();
+        var vehicleQueries = scope.ServiceProvider.GetRequiredService<IVehicleQueries>();
+        
         var vehicle = await vehicleQueries.GetVehicleAsync();
         if (vehicle is null)
         {

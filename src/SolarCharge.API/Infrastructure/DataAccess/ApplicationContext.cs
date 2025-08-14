@@ -9,7 +9,7 @@ namespace SolarCharge.API.Infrastructure.DataAccess;
 
 /// <summary>
 /// To create a migration against this DbContext. Run the following command from the "SolarCharge.API" directory.
-/// dotnet ef migrations add MigrationNameHere -o .\Infrastructure\DataAccess\Migrations
+/// dotnet ef migrations add MigrationNameHere -o ./Infrastructure/DataAccess/Migrations
 /// </summary>
 public class ApplicationContext(
     DbContextOptions<ApplicationContext> options,
@@ -25,11 +25,11 @@ public class ApplicationContext(
             .HasKey(vehicle => vehicle.Id);
     }
 
-    public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
+    public async Task<bool> SaveEntitiesAsync(CancellationToken stoppingToken = default)
     {
         await bus.DispatchDomainEventsAsync(this);
         
-        _ = await base.SaveChangesAsync(cancellationToken);
+        _ = await base.SaveChangesAsync(stoppingToken);
 
         return true;
     }

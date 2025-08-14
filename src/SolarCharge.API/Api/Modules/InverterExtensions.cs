@@ -13,7 +13,7 @@ public static class InverterExtensions
         services.Configure<InverterOptions>(
             configuration.GetSection(InverterOptions.Inverter));
         
-        services.AddScoped<IInverter, InverterService>();
+        services.AddTransient<IInverter, InverterService>();
         
         services.AddKeyedScoped<IInverter, NoOpInverterService>(InverterType.Unknown);
         services.AddKeyedScoped<IInverter, FroniusInverterService>(InverterType.Fronius);
