@@ -20,8 +20,10 @@ public sealed record VehicleDto(long Id, string DisplayName, VehicleStateDto Sta
 public enum VehicleStateDto
 {
     Unknown = 0,
-    Idle = 1,
-    Offline = 2,
+    Offline = 1,
+    Asleep = 2,
     Online = 3,
     Charging = 4,
+    Driving = 5,
+    Updating = 6
 }
