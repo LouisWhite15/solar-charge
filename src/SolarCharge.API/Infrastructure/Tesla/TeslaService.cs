@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
 using SolarCharge.API.Application.Repositories;
@@ -11,7 +12,8 @@ namespace SolarCharge.API.Infrastructure.Tesla;
 public class TeslaService(
     ILogger<TeslaService> logger,
     IHttpClientFactory httpClientFactory,
-    ITeslaAuthenticationRepository teslaAuthenticationRepository)
+    ITeslaAuthenticationRepository teslaAuthenticationRepository,
+    IOptions<TeslaOptions> teslaOptions)
     : ITesla
 {
 
@@ -33,7 +35,7 @@ public class TeslaService(
         }
         
         var httpClient = httpClientFactory.CreateClient("tesla-owner-api");
-        httpClient.BaseAddress = new Uri("https://owner-api.teslamotors.com");
+        httpClient.BaseAddress = new Uri(teslaOptions.Value.TeslaApiUrl);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", teslaAuthTokens.AccessToken);
 
         var productsHttpResponse = await httpClient.GetAsync("/api/1/products");
@@ -64,7 +66,7 @@ public class TeslaService(
         }
         
         var httpClient = httpClientFactory.CreateClient("tesla-owner-api");
-        httpClient.BaseAddress = new Uri("https://owner-api.teslamotors.com");
+        httpClient.BaseAddress = new Uri(teslaOptions.Value.TeslaApiUrl);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", teslaAuthTokens.AccessToken);
 
         var vehicleHttpResponse = await httpClient.GetAsync($"/api/1/vehicles/{vehicle.Id}");
@@ -86,15 +88,5 @@ public class TeslaService(
             vehicleResponse.Response.Id, vehicleResponse.Response.State);
 
         return new VehicleDto(vehicleResponse);
-    }
-
-    public Task StartChargingAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task StopChargingAsync()
-    {
-        throw new NotImplementedException();
     }
 }

@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SolarCharge.API.Application.IntegrationEvents.Events;
 using SolarCharge.API.Application.Models;
@@ -16,7 +17,8 @@ public class TeslaAuthenticationService(
     ILogger<TeslaAuthenticationService> logger,
     IHttpClientFactory httpClientFactory,
     ITeslaAuthenticationRepository teslaAuthenticationRepository,
-    IMessageBus bus)
+    IMessageBus bus,
+    IOptions<TeslaOptions> teslaOptions)
     : ITeslaAuthentication
 {
     public Dictionary<string, string> GetAuthenticationParameters()
@@ -101,7 +103,7 @@ public class TeslaAuthenticationService(
     private async Task<TeslaAuthenticationResult?> GetTeslaAuthenticationTokens(string jsonRequest)
     {
         var httpClient = httpClientFactory.CreateClient("tesla-auth-client");
-        var tokenResponse = await httpClient.PostAsync("https://auth.tesla.com/oauth2/v3/token", new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
+        var tokenResponse = await httpClient.PostAsync(teslaOptions.Value.TeslaAuthenticationUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
         var tokenContent = await tokenResponse.Content.ReadAsStringAsync();
         
         if (!tokenResponse.IsSuccessStatusCode)
