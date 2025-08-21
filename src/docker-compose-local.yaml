@@ -35,9 +35,11 @@ services:
       Application__InverterStatusCheckFrequencySeconds: 120
       Application__EvaluateSolarGenerationFrequencySeconds: 600
       Application__RefreshTeslaAccessTokenFrequencySeconds: 7200
+      Application__StartChargingExcessGenerationThresholdWatts: 2000
+      Application__StopChargingPullingFromGridThresholdWatts: 500
       Persistence__ConnectionString: "Data Source=/persistence/app.db"
       ChatBot__Url: "http://solar-charge-telegram"
-      Tesla__EncryptionKey: "YOUR_SECURE_ENCRYPTION_KEY"
+      Tesla__EncryptionKey: "SECURE_ENCRYPTION_KEY_THAT_IS_A_SECRET"
     volumes:
       - app-data:/persistence
     depends_on:
