@@ -32,7 +32,13 @@ public class ExecuteChargingStrategyHostedService(
         var tables = await influxDb.QueryAsync(queryApi => 
             queryApi.QueryAsync(query, "solar-charge"));
         
-        var records = tables.SelectMany(t => t.Records);
+        var records = tables.SelectMany(t => t.Records).ToList();
+        if (records.Count == 0)
+        {
+            logger.LogWarning("No records found for inverter status. Not enough data to evaluate a charging strategy");
+            return;
+        }
+        
         var influxInverterStatusResult = new InverterStatusResult(records);
 
         using var scope = serviceScopeFactory.CreateScope();
