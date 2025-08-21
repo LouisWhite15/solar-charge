@@ -15,8 +15,8 @@ public static class InverterExtensions
         
         services.AddTransient<IInverter, InverterService>();
         
-        services.AddKeyedScoped<IInverter, NoOpInverterService>(InverterType.Unknown);
-        services.AddKeyedScoped<IInverter, FroniusInverterService>(InverterType.Fronius);
+        services.AddKeyedTransient<IInverter, NoOpInverterService>(InverterType.Unknown);
+        services.AddKeyedTransient<IInverter, FroniusInverterService>(InverterType.Fronius);
 
         return services;
     }

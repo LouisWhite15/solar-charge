@@ -2,5 +2,5 @@
 
 public interface IChatBot
 {
-    Task SendMessage(string messageText);
+    Task SendMessageAsync(string messageText);
 }

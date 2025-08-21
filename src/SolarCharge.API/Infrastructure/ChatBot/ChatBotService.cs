@@ -20,7 +20,7 @@ public class ChatBotService(
         NumberHandling = JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString
     };
 
-    public async Task SendMessage(string messageText)
+    public async Task SendMessageAsync(string messageText)
     {
         logger.LogDebug("Sending message to user...");
 

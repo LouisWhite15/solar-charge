@@ -15,11 +15,11 @@ public static class ChatBotExtensions
 
         if (featureOptions?.IsChatBotEnabled is true)
         {
-            services.AddScoped<IChatBot, ChatBotService>();
+            services.AddTransient<IChatBot, ChatBotService>();
         }
         else
         {
-            services.AddScoped<IChatBot, NoOpChatBotService>();
+            services.AddTransient<IChatBot, NoOpChatBotService>();
         }
 
         return services;

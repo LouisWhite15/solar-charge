@@ -9,7 +9,6 @@ namespace SolarCharge.API.Application.HostedServices;
 public class ExecuteChargingStrategyHostedService(
     ILogger<ExecuteChargingStrategyHostedService> logger,
     IServiceScopeFactory serviceScopeFactory,
-    IServiceProvider serviceProvider,
     IInfluxDb influxDb,
     IOptions<ApplicationOptions> applicationOptions)
     : AsyncTimedHostedService(logger, applicationOptions.Value.EvaluateSolarGenerationFrequencySeconds)
@@ -42,7 +41,7 @@ public class ExecuteChargingStrategyHostedService(
             return;
         }
         
-        var chargingStrategy = serviceProvider.GetRequiredKeyedService<IChargingStrategy>(vehicle.State);
+        var chargingStrategy = scope.ServiceProvider.GetRequiredKeyedService<IChargingStrategy>(vehicle.State);
         
         logger.LogDebug("Executing charging strategy. State: {ChargeState}. VehicleId: {VehicleId}", vehicle.State, vehicle.Id);
         await chargingStrategy.Evaluate(influxInverterStatusResult, vehicle);

@@ -36,6 +36,7 @@ public static class ApplicationExtensions
         services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Updating);
 
         services.AddTransient<IDateTimeOffsetService, DateTimeOffsetService>();
+        services.AddSingleton<INotificationService, NotificationService>();
 
         // Hosted Services
         services.AddHostedService<WriteInverterStatusHostedService>();
