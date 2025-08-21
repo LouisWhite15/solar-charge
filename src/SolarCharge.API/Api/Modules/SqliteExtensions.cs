@@ -11,7 +11,13 @@ public static class SqliteExtensions
         IConfiguration configuration)
     {
         services.AddDbContext<ApplicationContext>(
-            options => options.UseSqlite(configuration.GetValue<string>("Persistence:ConnectionString")));
+            options => options.UseSqlite(configuration.GetValue<string>("Persistence:ConnectionString")),
+                
+                // This is weirdly important! Using Singleton scoping
+                // of the options allows Wolverine to significantly
+                // optimize the runtime pipeline of the handlers that
+                // use this DbContext type
+                optionsLifetime: ServiceLifetime.Singleton);
         
         return services;
     }
