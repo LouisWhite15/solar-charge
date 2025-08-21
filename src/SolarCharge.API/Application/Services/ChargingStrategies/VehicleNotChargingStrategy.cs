@@ -16,7 +16,7 @@ public class VehicleNotChargingStrategy(
         var startChargingExcessGenerationThresholdWatts = applicationOptions.Value.StartChargingExcessGenerationThresholdWatts;
         
         var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
-        var mostRecentStatus = orderedInverterStatuses[-1].Value;
+        var mostRecentStatus = orderedInverterStatuses.Last().Value;
         
         if (mostRecentStatus.Grid <= -startChargingExcessGenerationThresholdWatts)
         {

@@ -16,7 +16,7 @@ public class VehicleChargingStrategy(
         var stopChargingPullingFromGridThresholdWatts = applicationOptions.Value.StopChargingPullingFromGridThresholdWatts;
         
         var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
-        var mostRecentStatus = orderedInverterStatuses[-1].Value;
+        var mostRecentStatus = orderedInverterStatuses.Last().Value;
         
         if (mostRecentStatus.Grid >= stopChargingPullingFromGridThresholdWatts)
         {
