@@ -9,44 +9,58 @@ using SolarCharge.API.Infrastructure.Tesla.Dtos;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
 
-public class TeslaService(
-    ILogger<TeslaService> logger,
-    IHttpClientFactory httpClientFactory,
-    ITeslaAuthenticationRepository teslaAuthenticationRepository,
-    IOptions<TeslaOptions> teslaOptions)
-    : ITesla
+public class TeslaService : ITesla
 {
+    private readonly ILogger<TeslaService> _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ITeslaAuthenticationRepository _teslaAuthenticationRepository;
+    private readonly IOptions<TeslaOptions> _teslaOptions;
 
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
+
+    public TeslaService(
+        ILogger<TeslaService> logger,
+        IHttpClientFactory httpClientFactory,
+        ITeslaAuthenticationRepository teslaAuthenticationRepository,
+        IOptions<TeslaOptions> teslaOptions)
     {
-        PropertyNameCaseInsensitive = true,
-        NumberHandling = JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString
-    };
+        _logger = logger;
+        _httpClientFactory = httpClientFactory;
+        _teslaAuthenticationRepository = teslaAuthenticationRepository;
+        _teslaOptions = teslaOptions;
+        
+        _jsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            NumberHandling = JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString
+        };
+        _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    }
     
     public async Task<VehicleDto?> GetVehicleAsync()
     {
-        logger.LogTrace("Retrieving vehicle id from Tesla");
+        _logger.LogTrace("Retrieving vehicle id from Tesla");
 
-        var teslaAuthTokens = await teslaAuthenticationRepository.GetAsync();
+        var teslaAuthTokens = await _teslaAuthenticationRepository.GetAsync();
         if (teslaAuthTokens is null)
         {
-            logger.LogError("Not authenticated with Tesla");
+            _logger.LogError("Not authenticated with Tesla");
             return null;
         }
         
-        var httpClient = httpClientFactory.CreateClient("tesla-owner-api");
-        httpClient.BaseAddress = new Uri(teslaOptions.Value.TeslaApiUrl);
+        var httpClient = _httpClientFactory.CreateClient("tesla-owner-api");
+        httpClient.BaseAddress = new Uri(_teslaOptions.Value.TeslaApiUrl);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", teslaAuthTokens.AccessToken);
 
         var productsHttpResponse = await httpClient.GetAsync("/api/1/products");
         if (!productsHttpResponse.IsSuccessStatusCode)
         {
-            logger.LogError("Could not retrieve products from Tesla. StatusCode: {StatusCode}", productsHttpResponse.StatusCode);
+            _logger.LogError("Could not retrieve products from Tesla. StatusCode: {StatusCode}", productsHttpResponse.StatusCode);
             return null;
         }
         
         var productsContent = await productsHttpResponse.Content.ReadAsStringAsync();
-        var productsResponse = JsonSerializer.Deserialize<ProductsResponse>(productsContent, JsonSerializerOptions);
+        var productsResponse = JsonSerializer.Deserialize<ProductsResponse>(productsContent, _jsonSerializerOptions);
 
         var product = productsResponse?.Products.FirstOrDefault();
         return product is null
@@ -56,35 +70,35 @@ public class TeslaService(
 
     public async Task<VehicleDto?> GetVehicleStateAsync(VehicleDto vehicle)
     {
-        logger.LogTrace("Retrieving charge state from Tesla");
+        _logger.LogTrace("Retrieving charge state from Tesla");
 
-        var teslaAuthTokens = await teslaAuthenticationRepository.GetAsync();
+        var teslaAuthTokens = await _teslaAuthenticationRepository.GetAsync();
         if (teslaAuthTokens is null)
         {
-            logger.LogError("Not authenticated with Tesla");
+            _logger.LogError("Not authenticated with Tesla");
             return null;
         }
         
-        var httpClient = httpClientFactory.CreateClient("tesla-owner-api");
-        httpClient.BaseAddress = new Uri(teslaOptions.Value.TeslaApiUrl);
+        var httpClient = _httpClientFactory.CreateClient("tesla-owner-api");
+        httpClient.BaseAddress = new Uri(_teslaOptions.Value.TeslaApiUrl);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", teslaAuthTokens.AccessToken);
 
         var vehicleHttpResponse = await httpClient.GetAsync($"/api/1/vehicles/{vehicle.Id}");
         if (!vehicleHttpResponse.IsSuccessStatusCode)
         {
-            logger.LogWarning("Could not retrieve vehicle data from Tesla. StatusCode: {StatusCode}", vehicleHttpResponse.StatusCode);
+            _logger.LogWarning("Could not retrieve vehicle data from Tesla. StatusCode: {StatusCode}", vehicleHttpResponse.StatusCode);
             return null;
         }
         
         var vehicleContent = await vehicleHttpResponse.Content.ReadAsStringAsync();
-        var vehicleResponse = JsonSerializer.Deserialize<VehicleResponse>(vehicleContent, JsonSerializerOptions);
+        var vehicleResponse = JsonSerializer.Deserialize<VehicleResponse>(vehicleContent, _jsonSerializerOptions);
         if (vehicleResponse?.Response is null)
         {
-            logger.LogWarning("Could not parse vehicle API response");
+            _logger.LogWarning("Could not parse vehicle API response");
             return null;
         }
         
-        logger.LogDebug("State retrieved from Tesla. Id: {Id}. State: {State}", 
+        _logger.LogDebug("State retrieved from Tesla. Id: {Id}. State: {State}", 
             vehicleResponse.Response.Id, vehicleResponse.Response.State);
 
         return new VehicleDto(vehicleResponse);

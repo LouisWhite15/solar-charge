@@ -23,6 +23,11 @@ try
     
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents();
+    
+    builder.Host.UseWolverine(opts =>
+    {
+        opts.Durability.Mode = DurabilityMode.MediatorOnly;
+    });
 
     builder.Services
         .AddApplication(builder.Configuration)
@@ -31,11 +36,6 @@ try
         .AddInverter(builder.Configuration)
         .AddTesla(builder.Configuration)
         .AddChatBot(builder.Configuration);
-    
-    builder.Host.UseWolverine(opts =>
-    {
-        opts.Durability.Mode = DurabilityMode.MediatorOnly;
-    });
     
     builder.Services.AddControllers();
 

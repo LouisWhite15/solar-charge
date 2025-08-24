@@ -9,23 +9,23 @@ public class VehicleNotChargingStrategy(
     INotificationService notificationService)
     : IChargingStrategy
 {
-    public Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
+    public async Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
     {
         logger.LogInformation("Evaluating VehicleNotChargingStrategy");
 
-        var excessGenerationThresholdWatts = applicationOptions.Value.ExcessGenerationToChargeThresholdWatts;
+        var startChargingExcessGenerationThresholdWatts = applicationOptions.Value.StartChargingExcessGenerationThresholdWatts;
         
         var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;
         
-        if (mostRecentStatus.Grid <= -excessGenerationThresholdWatts)
+        if (mostRecentStatus.Grid <= -startChargingExcessGenerationThresholdWatts)
         {
             var wattageSuppliedToGrid = Math.Abs(mostRecentStatus.Grid);
-            logger.LogDebug("Supplying {GridValue}W to the grid. This exceeds the configured threshold of {ExcessGenerationThresholdWatts}W", wattageSuppliedToGrid, excessGenerationThresholdWatts);
+            logger.LogDebug("Supplying {GridValue}W to the grid. This exceeds the configured threshold of {ExcessGenerationThresholdWatts}W",
+                wattageSuppliedToGrid,
+                startChargingExcessGenerationThresholdWatts);
             
-            notificationService.SendAsync(NotificationType.StartCharging, wattageSuppliedToGrid);
+            await notificationService.SendAsync(NotificationType.StartCharging, wattageSuppliedToGrid);
         }
-        
-        return Task.CompletedTask;
     }
 }
