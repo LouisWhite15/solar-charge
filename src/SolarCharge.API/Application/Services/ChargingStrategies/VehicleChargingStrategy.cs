@@ -9,23 +9,16 @@ public class VehicleChargingStrategy(
     INotificationService notificationService)
     : IChargingStrategy
 {
-    public async Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
+    public Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
     {
-        logger.LogInformation("Evaluating VehicleChargingStrategy");
-
-        var stopChargingPullingFromGridThresholdWatts = applicationOptions.Value.StopChargingPullingFromGridThresholdWatts;
+        // This charging strategy is currently unused as we are not current retrieving charge state
+        // This will be implemented soon
+        logger.LogInformation("Evaluating UnknownChargeStateStrategy");
         
         var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;
         
-        if (mostRecentStatus.Grid >= stopChargingPullingFromGridThresholdWatts)
-        {
-            var wattagePullingFromGrid = Math.Abs(mostRecentStatus.Grid);
-            logger.LogDebug("Pulling {GridValue}W from the grid. This exceeds the configured threshold of {PullingFromGridThreshold}W",
-                wattagePullingFromGrid,
-                stopChargingPullingFromGridThresholdWatts);
-            
-            await notificationService.SendAsync(NotificationType.StopCharging, wattagePullingFromGrid);
-        }
+        logger.LogTrace("Most recent reading: Grid: {Grid}W. PV: {PV}W", mostRecentStatus.Grid, mostRecentStatus.Photovoltaic);
+        return Task.CompletedTask;
     }
 }

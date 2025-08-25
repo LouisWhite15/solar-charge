@@ -18,14 +18,28 @@ public class VehicleNotChargingStrategy(
         var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;
         
+        logger.LogTrace("Most recent reading: Grid: {Grid}W. PV: {PV}W", mostRecentStatus.Grid, mostRecentStatus.Photovoltaic);
+        
+        var gridAbsoluteWatts = Math.Abs(mostRecentStatus.Grid);
         if (mostRecentStatus.Grid <= -startChargingExcessGenerationThresholdWatts)
         {
-            var wattageSuppliedToGrid = Math.Abs(mostRecentStatus.Grid);
             logger.LogDebug("Supplying {GridValue}W to the grid. This exceeds the configured threshold of {ExcessGenerationThresholdWatts}W",
-                wattageSuppliedToGrid,
+                gridAbsoluteWatts,
                 startChargingExcessGenerationThresholdWatts);
             
-            await notificationService.SendAsync(NotificationType.StartCharging, wattageSuppliedToGrid);
+            await notificationService.SendAsync(NotificationType.StartCharging, gridAbsoluteWatts);
+        }
+        else if (mostRecentStatus.Grid < 0)
+        {
+            logger.LogDebug("Not supplying enough to the grid to start charging. Supplying {SupplyingWatts}W. Threshold: {Threshold}W",
+                gridAbsoluteWatts,
+                startChargingExcessGenerationThresholdWatts);
+            await notificationService.SendAsync(NotificationType.StopCharging, mostRecentStatus.Grid);
+        }
+        else
+        {
+            logger.LogDebug("Pulling from the grid. Pulling: {PullingWatts}W", gridAbsoluteWatts);
+            await notificationService.SendAsync(NotificationType.StopCharging, mostRecentStatus.Grid);
         }
     }
 }

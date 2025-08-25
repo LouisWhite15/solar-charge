@@ -13,9 +13,6 @@ public static class VehicleStateExtensions
             VehicleState.Offline => VehicleStateDto.Offline,
             VehicleState.Asleep => VehicleStateDto.Asleep,
             VehicleState.Online => VehicleStateDto.Online,
-            VehicleState.Charging => VehicleStateDto.Charging,
-            VehicleState.Driving => VehicleStateDto.Driving,
-            VehicleState.Updating => VehicleStateDto.Updating,
             _ => VehicleStateDto.Unknown
         };
     }
@@ -28,9 +25,6 @@ public static class VehicleStateExtensions
             VehicleStateDto.Offline => VehicleState.Offline,
             VehicleStateDto.Asleep => VehicleState.Asleep,
             VehicleStateDto.Online => VehicleState.Online,
-            VehicleStateDto.Charging => VehicleState.Charging,
-            VehicleStateDto.Driving => VehicleState.Driving,
-            VehicleStateDto.Updating => VehicleState.Updating,
             _ => VehicleState.Unknown
         };
     }
