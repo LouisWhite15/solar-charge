@@ -36,7 +36,7 @@ services:
       Application__StartChargingExcessGenerationThresholdWatts: 2000
       Application__StopChargingPullingFromGridThresholdWatts: 500
       Persistence__ConnectionString: "Data Source=/persistence/app.db"
-      ChatBot__Url: "http://solar-charge-telegram"
+      ChatBot__Url: "http://solar-charge-telegram:5010"
       Tesla__EncryptionKey: "YOUR_SECURE_ENCRYPTION_KEY"
     volumes:
       - app-data:/persistence
