@@ -34,12 +34,12 @@ public class VehicleNotChargingStrategy(
             logger.LogDebug("Not supplying enough to the grid to start charging. Supplying {SupplyingWatts}W. Threshold: {Threshold}W",
                 gridAbsoluteWatts,
                 startChargingExcessGenerationThresholdWatts);
-            await notificationService.SendAsync(NotificationType.StopCharging, mostRecentStatus.Grid);
+            await notificationService.SendAsync(NotificationType.StopCharging, gridAbsoluteWatts);
         }
         else
         {
             logger.LogDebug("Pulling from the grid. Pulling: {PullingWatts}W", gridAbsoluteWatts);
-            await notificationService.SendAsync(NotificationType.StopCharging, mostRecentStatus.Grid);
+            await notificationService.SendAsync(NotificationType.StopCharging, gridAbsoluteWatts);
         }
     }
 }

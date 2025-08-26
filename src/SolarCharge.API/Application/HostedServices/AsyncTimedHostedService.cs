@@ -2,7 +2,8 @@ namespace SolarCharge.API.Application.HostedServices;
 
 public abstract class AsyncTimedHostedService(
     ILogger<AsyncTimedHostedService> logger,
-    int periodSeconds) : BackgroundService
+    int periodSeconds) 
+    : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -23,6 +24,10 @@ public abstract class AsyncTimedHostedService(
         catch (OperationCanceledException)
         {
             logger.LogInformation("{ServiceName} is stopping", GetType().Name);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An unexpected error occurred in {ServiceName}", GetType().Name);
         }
     }
 
