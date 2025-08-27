@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using SolarCharge.ChatBot.Infrastructure.DataAccess;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 
 namespace SolarCharge.ChatBot.Telegram;
 
@@ -27,6 +28,6 @@ public class TelegramService(
         }
         
         var bot = new TelegramBotClient(_botToken);
-        await bot.SendMessage(chatId,  messageText);
+        await bot.SendMessage(chatId,  messageText, ParseMode.Html);
     }
 }
