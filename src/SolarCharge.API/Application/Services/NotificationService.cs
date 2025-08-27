@@ -15,7 +15,7 @@ public class NotificationService(
 {
     private readonly Dictionary<NotificationType, string> _notificationMessages = new()
     {
-        { NotificationType.StartCharging, "⚡  <b>Start charging!</b> Currently supplying <code>{0}W</code> to the grid" },
+        { NotificationType.StartCharging, "⚡ <b>Start charging!</b> Currently supplying <code>{0}W</code> to the grid" },
         { NotificationType.StopCharging, "⚠️ <b>Stop charging!</b> Currently pulling <code>{0}W</code> from the grid" }
     };
 
