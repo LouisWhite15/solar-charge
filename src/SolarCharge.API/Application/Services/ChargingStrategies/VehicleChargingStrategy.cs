@@ -13,7 +13,7 @@ public class VehicleChargingStrategy(
     {
         // This charging strategy is currently unused as we are not current retrieving charge state
         // This will be implemented soon
-        logger.LogInformation("Evaluating UnknownChargeStateStrategy");
+        logger.LogInformation("Evaluating {Strategy}", GetType().Name);
         
         var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;

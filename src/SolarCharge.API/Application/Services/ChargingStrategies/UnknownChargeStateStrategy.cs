@@ -11,7 +11,7 @@ public class UnknownChargeStateStrategy(
 {
     public Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
     {
-        logger.LogInformation("Evaluating UnknownChargeStateStrategy");
+        logger.LogInformation("Evaluating {Strategy}", GetType().Name);
         
         var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;
