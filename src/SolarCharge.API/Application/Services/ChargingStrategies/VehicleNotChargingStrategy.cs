@@ -41,7 +41,7 @@ public class VehicleNotChargingStrategy(
         {
             logger.LogDebug("Pulling {GridValue}W from the grid. This exceeds the configured threshold of {Threshold}W",
                 gridAbsoluteWatts,
-                startChargingExcessGenerationThresholdWatts);
+                stopChargingPullingFromGridThresholdWatts);
             await notificationService.SendAsync(NotificationType.StopCharging, gridAbsoluteWatts);
         }
         // Do a few more checks for logging purposes
