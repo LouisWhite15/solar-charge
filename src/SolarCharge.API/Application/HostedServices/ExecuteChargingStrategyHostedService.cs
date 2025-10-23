@@ -45,8 +45,8 @@ public class ExecuteChargingStrategyHostedService(
         var vehicleQueries = scope.ServiceProvider.GetRequiredService<IVehicleQueries>();
         
         // Retrieve vehicle from persistence
-        var vehicleId = await vehicleQueries.GetVehicleIdAsync();
-        if (vehicleId is null)
+        var vehicle = await vehicleQueries.GetVehicleAsync();
+        if (vehicle is null)
         {
             logger.LogWarning("Vehicle not found. No charging strategy will be executed");
             return;
@@ -54,15 +54,10 @@ public class ExecuteChargingStrategyHostedService(
         
         // Execute command to retrieve and update the vehicle state
         logger.LogInformation("Sending {CommandName}", nameof(UpdateStateCommand));
-        await bus.InvokeAsync(new UpdateStateCommand(vehicleId.Value));
+        await bus.InvokeAsync(new UpdateStateCommand(vehicle.Id));
         
-        // Retrieve the vehicle state from persistence
-        var vehicle = await vehicleQueries.GetVehicleAsync();
-        if (vehicle is null)
-        {
-            logger.LogWarning("Vehicle not found. No charging strategy will be executed");
-            return;
-        }
+        // Retrieve the updated state of the vehicle
+        vehicle = await vehicleQueries.GetVehicleAsync();
         
         // Execute the charging strategy for the state of the vehicle
         var chargingStrategy = scope.ServiceProvider.GetRequiredKeyedService<IChargingStrategy>(vehicle.State);

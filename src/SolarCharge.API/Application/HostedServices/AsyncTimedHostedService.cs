@@ -9,25 +9,27 @@ public abstract class AsyncTimedHostedService(
     {
         logger.LogInformation("{ServiceName} is running", GetType().Name);
 
-        // When the timer should have no due-time, then do the work once now.
-        await DoWorkAsync();
-
-        using PeriodicTimer timer = new(TimeSpan.FromSeconds(periodSeconds));
-
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            while (await timer.WaitForNextTickAsync(stoppingToken))
+            // When the timer should have no due-time, then do the work once now.
+            await DoWorkAsync();
+
+            using PeriodicTimer timer = new(TimeSpan.FromSeconds(periodSeconds));
+            try
             {
-                await DoWorkAsync();
+                while (await timer.WaitForNextTickAsync(stoppingToken))
+                {
+                    await DoWorkAsync();
+                }
             }
-        }
-        catch (OperationCanceledException)
-        {
-            logger.LogInformation("{ServiceName} is stopping", GetType().Name);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An unexpected error occurred in {ServiceName}", GetType().Name);
+            catch (OperationCanceledException)
+            {
+                logger.LogInformation("{ServiceName} is stopping", GetType().Name);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An unexpected error occurred in {ServiceName}", GetType().Name);
+            }
         }
     }
 
