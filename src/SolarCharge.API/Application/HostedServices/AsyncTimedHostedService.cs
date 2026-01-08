@@ -5,11 +5,11 @@ public abstract class AsyncTimedHostedService(
     int periodSeconds) 
     : BackgroundService
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("{ServiceName} is running", GetType().Name);
 
-        while (!stoppingToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             // When the timer should have no due-time, then do the work once now.
             await DoWorkAsync();
@@ -17,9 +17,9 @@ public abstract class AsyncTimedHostedService(
             using PeriodicTimer timer = new(TimeSpan.FromSeconds(periodSeconds));
             try
             {
-                while (await timer.WaitForNextTickAsync(stoppingToken))
+                while (await timer.WaitForNextTickAsync(cancellationToken))
                 {
-                    await DoWorkAsync();
+                    await DoWorkAsync(cancellationToken);
                 }
             }
             catch (OperationCanceledException)
@@ -33,5 +33,5 @@ public abstract class AsyncTimedHostedService(
         }
     }
 
-    protected abstract Task DoWorkAsync();
+    protected abstract Task DoWorkAsync(CancellationToken cancellationToken = default);
 }

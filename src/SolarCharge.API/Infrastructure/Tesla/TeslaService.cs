@@ -2,9 +2,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
+using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Application.Ports;
-using SolarCharge.API.Application.Repositories;
 using SolarCharge.API.Infrastructure.Tesla.Dtos;
 
 namespace SolarCharge.API.Infrastructure.Tesla;

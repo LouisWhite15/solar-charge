@@ -12,7 +12,7 @@ public class WriteInverterStatusHostedService(
     IOptions<ApplicationOptions> applicationOptions)
     : AsyncTimedHostedService(logger, applicationOptions.Value.InverterStatusCheckFrequencySeconds)
 {
-    protected override async Task DoWorkAsync()
+    protected override async Task DoWorkAsync(CancellationToken cancellationToken = default)
     {
         logger.LogDebug("Retrieving inverter status");
         var inverterStatus = await inverter.GetAsync();

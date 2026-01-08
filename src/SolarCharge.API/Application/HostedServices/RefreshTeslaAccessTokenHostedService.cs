@@ -1,8 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
+using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
+using SolarCharge.API.Application.Features.TeslaAuth.Refresh;
 using SolarCharge.API.Application.Ports;
-using SolarCharge.API.Application.Repositories;
 using SolarCharge.API.Application.Services;
+using Wolverine;
 
 namespace SolarCharge.API.Application.HostedServices;
 
@@ -13,7 +15,7 @@ public class RefreshTeslaAccessTokenHostedService(
     IOptions<ApplicationOptions> applicationOptions) 
     : AsyncTimedHostedService(logger, applicationOptions.Value.RefreshTeslaAccessTokenFrequencySeconds)
 {
-    protected override async Task DoWorkAsync()
+    protected override async Task DoWorkAsync(CancellationToken cancellationToken = default)
     {
         logger.LogTrace("Refresh token job started");
         
@@ -38,8 +40,9 @@ public class RefreshTeslaAccessTokenHostedService(
         
         logger.LogDebug("Token will be refreshed");
 
-        var teslaAuthentication = scope.ServiceProvider.GetRequiredService<ITeslaAuthentication>();
-        await teslaAuthentication.RefreshAsync();
+        var commandBus = scope.ServiceProvider.GetRequiredService<ICommandBus>();
+        var refreshCommand = new RefreshTeslaCommand();
+        await commandBus.InvokeAsync(refreshCommand, cancellationToken);
         
         logger.LogTrace("Refresh token job completed");
     }

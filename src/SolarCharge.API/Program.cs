@@ -1,5 +1,6 @@
 using Serilog;
 using SolarCharge.API.Api.Modules;
+using SolarCharge.API.Application.Features.TeslaAuth;
 using SolarCharge.API.Web.Components;
 using Wolverine;
 

@@ -1,6 +1,9 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@using SolarCharge.API.Application.Features.TeslaAuth.Authenticate
+@using SolarCharge.API.Application.Features.TeslaAuth.Services
 @using SolarCharge.API.Application.Ports
+@using Wolverine
 
 <PageTitle>SolarCharge</PageTitle>
 
@@ -78,7 +81,10 @@
 
 @code {
     [Inject]
-    private ITeslaAuthentication TeslaAuthentication { get; set; }
+    private ICommandBus CommandBus { get; set; }
+    
+    [Inject]
+    private ITeslaAuthenticationService TeslaAuthenticationService { get; set; }
 
     private Dictionary<string, string> AuthenticationParameters { get; set; }
     private bool? _authenticationSuccessful;
@@ -96,7 +102,7 @@
 
     protected override Task OnInitializedAsync()
     {
-        AuthenticationParameters = TeslaAuthentication.GetAuthenticationParameters();
+        AuthenticationParameters = TeslaAuthenticationService.GetAuthenticationParameters();
         _teslaLogonUrl = GetTeslaLogonUrl(AuthenticationParameters);
 
         return Task.CompletedTask;
@@ -106,8 +112,9 @@
     {
         if (UrlWithCode is null)
             return;
-        
-        _authenticationSuccessful = await TeslaAuthentication.AuthenticateAsync(UrlWithCode, AuthenticationParameters);
+
+        var authenticateCommand = new AuthenticateTeslaCommand(UrlWithCode, AuthenticationParameters);
+        _authenticationSuccessful = await CommandBus.InvokeAsync<bool>(authenticateCommand);
     }
 
     private static void SubmitProvidedTokens()

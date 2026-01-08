@@ -16,7 +16,7 @@ public class ExecuteChargingStrategyHostedService(
     IMessageBus bus)
     : AsyncTimedHostedService(logger, applicationOptions.Value.EvaluateSolarGenerationFrequencySeconds)
 {
-    protected override async Task DoWorkAsync()
+    protected override async Task DoWorkAsync(CancellationToken cancellationToken = default)
     {
         logger.LogDebug("Evaluating solar generation");
         
