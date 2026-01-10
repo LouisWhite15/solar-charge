@@ -1,8 +1,9 @@
 using SolarCharge.API.Application;
 using SolarCharge.API.Application.Features.Vehicles;
-using SolarCharge.API.Application.HostedServices;
 using SolarCharge.API.Application.Services;
 using SolarCharge.API.Application.Services.ChargingStrategies;
+using SolarCharge.API.Application.Shared;
+using SolarCharge.API.Infrastructure.HostedServices;
 
 namespace SolarCharge.API.Api.Modules;
 
@@ -21,17 +22,19 @@ public static class ApplicationExtensions
         
         services.AddHttpClient();
         
+        // Shared
+        services.AddTransient<IClock, Clock>();
+        
         // Services
         services.AddKeyedTransient<IChargingStrategy, UnknownChargeStateStrategy>(VehicleStateDto.Unknown);
         services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Offline);
         services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Asleep);
         services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Online);
-
-        services.AddTransient<IDateTimeOffsetService, DateTimeOffsetService>();
+        
         services.AddSingleton<INotificationService, NotificationService>();
 
         // Hosted Services
-        services.AddHostedService<WriteInverterStatusHostedService>();
+        services.AddHostedService<InverterTelemetryHostedService>();
         services.AddHostedService<ExecuteChargingStrategyHostedService>();
         services.AddHostedService<RefreshTeslaAccessTokenHostedService>();
         

@@ -1,10 +1,11 @@
 ﻿using InfluxDB.Client.Core.Flux.Domain;
+using SolarCharge.API.Application.Features.Inverter.Domain;
 
-namespace SolarCharge.API.Application.Models;
+namespace SolarCharge.API.Application.Features.Inverter.Queries;
 
-public sealed record InverterStatusResult(Dictionary<DateTime, InverterStatus> Result)
+public sealed record InverterTelemetryResult(Dictionary<DateTime, InverterStatus> Result)
 {
-    public InverterStatusResult(IEnumerable<FluxRecord> records)
+    public InverterTelemetryResult(IEnumerable<FluxRecord> records)
         : this(new Dictionary<DateTime, InverterStatus>())
     {
         foreach (var record in records)

@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+using SolarCharge.API.Application.Features.Inverter.Domain;
+using SolarCharge.API.Application.Features.Inverter.Queries;
 using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Models;
 
@@ -10,13 +12,13 @@ public class VehicleChargingStrategy(
     INotificationService notificationService)
     : IChargingStrategy
 {
-    public Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
+    public Task Evaluate(InverterTelemetryResult inverterTelemetryResult, VehicleDto vehicle)
     {
         // This charging strategy is currently unused as we are not current retrieving charge state
         // This will be implemented soon
         logger.LogInformation("Evaluating {Strategy}", GetType().Name);
         
-        var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
+        var orderedInverterStatuses = inverterTelemetryResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;
         
         logger.LogTrace("Most recent reading: Grid: {Grid}W. PV: {PV}W", mostRecentStatus.Grid, mostRecentStatus.Photovoltaic);

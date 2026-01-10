@@ -1,4 +1,4 @@
-namespace SolarCharge.API.Application.HostedServices;
+namespace SolarCharge.API.Infrastructure.HostedServices;
 
 public abstract class AsyncTimedHostedService(
     ILogger<AsyncTimedHostedService> logger,

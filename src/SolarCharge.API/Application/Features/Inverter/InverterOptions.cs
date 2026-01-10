@@ -1,4 +1,6 @@
-namespace SolarCharge.API.Infrastructure.Inverter;
+using SolarCharge.API.Infrastructure.Inverter;
+
+namespace SolarCharge.API.Application.Features.Inverter;
 
 public class InverterOptions
 {

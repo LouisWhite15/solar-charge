@@ -1,5 +1,6 @@
 using Serilog;
 using SolarCharge.API.Api.Modules;
+using SolarCharge.API.Application.Features.Inverter;
 using SolarCharge.API.Application.Features.TeslaAuth;
 using SolarCharge.API.Web.Components;
 using Wolverine;
@@ -33,7 +34,6 @@ try
     builder.Services
         .AddApplication(builder.Configuration)
         .AddSqlite(builder.Configuration)
-        .AddInfluxDb(builder.Configuration)
         .AddInverter(builder.Configuration)
         .AddTeslaAuth(builder.Configuration)
         .AddChatBot(builder.Configuration);

@@ -2,11 +2,14 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
+using SolarCharge.API.Application.Features.TeslaAuth.Domain;
 using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
+using SolarCharge.API.Application.Features.TeslaAuth.Queries;
 using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Features.Vehicles.Infrastructure;
 using SolarCharge.API.Application.Models;
 using SolarCharge.API.Infrastructure.Tesla.Dtos;
+using Wolverine;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
 
@@ -14,21 +17,21 @@ public class TeslaClient : ITeslaClient
 {
     private readonly ILogger<TeslaClient> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ITeslaAuthenticationRepository _teslaAuthenticationRepository;
-    private readonly IOptions<VehicleOptions> _vehicleOptions;
+    private readonly IMessageBus _messageBus;
+    private readonly IOptions<TeslaOptions> _teslaOptions;
 
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public TeslaClient(
         ILogger<TeslaClient> logger,
         IHttpClientFactory httpClientFactory,
-        ITeslaAuthenticationRepository teslaAuthenticationRepository,
-        IOptions<VehicleOptions> vehicleOptions)
+        IMessageBus messageBus,
+        IOptions<TeslaOptions> teslaOptions)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _teslaAuthenticationRepository = teslaAuthenticationRepository;
-        _vehicleOptions = vehicleOptions;
+        _messageBus = messageBus;
+        _teslaOptions = teslaOptions;
         
         _jsonSerializerOptions = new JsonSerializerOptions
         {
@@ -42,7 +45,7 @@ public class TeslaClient : ITeslaClient
     {
         _logger.LogTrace("Retrieving vehicle id from Tesla");
 
-        var teslaAuthTokens = await _teslaAuthenticationRepository.GetAsync(cancellationToken);
+        var teslaAuthTokens = await _messageBus.InvokeAsync<TeslaAuthentication?>(new GetTeslaAuthenticationTokenQuery(), cancellationToken);
         if (teslaAuthTokens is null)
         {
             _logger.LogError("Not authenticated with Tesla");
@@ -50,7 +53,7 @@ public class TeslaClient : ITeslaClient
         }
         
         var httpClient = _httpClientFactory.CreateClient("tesla-owner-api");
-        httpClient.BaseAddress = new Uri(_vehicleOptions.Value.TeslaApiUrl);
+        httpClient.BaseAddress = new Uri(_teslaOptions.Value.TeslaApiUrl);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", teslaAuthTokens.AccessToken);
 
         var productsHttpResponse = await httpClient.GetAsync("/api/1/products", cancellationToken);
@@ -73,7 +76,7 @@ public class TeslaClient : ITeslaClient
     {
         _logger.LogTrace("Retrieving charge state from Tesla");
 
-        var teslaAuthTokens = await _teslaAuthenticationRepository.GetAsync(cancellationToken);
+        var teslaAuthTokens = await _messageBus.InvokeAsync<TeslaAuthentication?>(new GetTeslaAuthenticationTokenQuery(), cancellationToken);
         if (teslaAuthTokens is null)
         {
             _logger.LogError("Not authenticated with Tesla");
@@ -81,7 +84,7 @@ public class TeslaClient : ITeslaClient
         }
         
         var httpClient = _httpClientFactory.CreateClient("tesla-owner-api");
-        httpClient.BaseAddress = new Uri(_vehicleOptions.Value.TeslaApiUrl);
+        httpClient.BaseAddress = new Uri(_teslaOptions.Value.TeslaApiUrl);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", teslaAuthTokens.AccessToken);
 
         var vehicleHttpResponse = await httpClient.GetAsync($"/api/1/vehicles/{vehicleId}", cancellationToken);

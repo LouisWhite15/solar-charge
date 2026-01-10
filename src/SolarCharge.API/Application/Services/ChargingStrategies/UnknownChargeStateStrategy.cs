@@ -1,4 +1,6 @@
-﻿using SolarCharge.API.Application.Features.Vehicles;
+﻿using SolarCharge.API.Application.Features.Inverter.Domain;
+using SolarCharge.API.Application.Features.Inverter.Queries;
+using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Models;
 using Wolverine;
 
@@ -9,11 +11,11 @@ public class UnknownChargeStateStrategy(
     IMessageBus bus)
     : IChargingStrategy
 {
-    public Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
+    public Task Evaluate(InverterTelemetryResult inverterTelemetryResult, VehicleDto vehicle)
     {
         logger.LogInformation("Evaluating {Strategy}", GetType().Name);
         
-        var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
+        var orderedInverterStatuses = inverterTelemetryResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;
         
         logger.LogTrace("Most recent reading: Grid: {Grid}W. PV: {PV}W", mostRecentStatus.Grid, mostRecentStatus.Photovoltaic);

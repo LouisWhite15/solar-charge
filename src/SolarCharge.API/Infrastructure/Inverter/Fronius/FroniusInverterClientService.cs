@@ -1,16 +1,17 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using SolarCharge.API.Application.Models;
-using SolarCharge.API.Application.Ports;
+using SolarCharge.API.Application.Features.Inverter;
+using SolarCharge.API.Application.Features.Inverter.Domain;
+using SolarCharge.API.Application.Features.Inverter.Infrastructure;
 using SolarCharge.API.Infrastructure.Inverter.Fronius.Dtos;
 
 namespace SolarCharge.API.Infrastructure.Inverter.Fronius;
 
-public class FroniusInverterService(
-    ILogger<FroniusInverterService> logger,
+public class FroniusInverterClientService(
+    ILogger<FroniusInverterClientService> logger,
     IHttpClientFactory httpClientFactory,
     IOptions<InverterOptions> inverterOptions)
-    : IInverter
+    : IInverterClient
 {
     private const string HttpClientName = "FroniusInverter";
 
@@ -20,17 +21,17 @@ public class FroniusInverterService(
         PropertyNameCaseInsensitive = true
     };
 
-    public async Task<InverterStatus> GetAsync()
+    public async Task<InverterStatus> GetAsync(CancellationToken cancellationToken = default)
     {
         logger.LogTrace("Retrieving Fronius inverter status");
         
         var httpClient = httpClientFactory.CreateClient(HttpClientName);
         httpClient.BaseAddress = new Uri(_inverterUrl);
 
-        var response = await httpClient.GetAsync("/api/status/powerflow");
+        var response = await httpClient.GetAsync("/api/status/powerflow", cancellationToken);
         response.EnsureSuccessStatusCode();
         
-        var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
         var inverterStatusDto = JsonSerializer.Deserialize<InverterStatusDto>(content, _jsonSerializerOptions);
 
         if (inverterStatusDto is null)

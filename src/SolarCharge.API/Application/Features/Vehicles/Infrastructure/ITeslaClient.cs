@@ -1,6 +1,4 @@
-﻿using SolarCharge.API.Application.Models;
-
-namespace SolarCharge.API.Application.Features.Vehicles.Infrastructure;
+﻿namespace SolarCharge.API.Application.Features.Vehicles.Infrastructure;
 
 public interface ITeslaClient
 {

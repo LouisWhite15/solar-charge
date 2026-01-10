@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+using SolarCharge.API.Application.Features.Inverter.Domain;
+using SolarCharge.API.Application.Features.Inverter.Queries;
 using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Models;
 
@@ -10,14 +12,14 @@ public class VehicleNotChargingStrategy(
     INotificationService notificationService)
     : IChargingStrategy
 {
-    public async Task Evaluate(InverterStatusResult inverterStatusResult, VehicleDto vehicle)
+    public async Task Evaluate(InverterTelemetryResult inverterTelemetryResult, VehicleDto vehicle)
     {
         logger.LogInformation("Evaluating {Strategy}", GetType().Name);
 
         var startChargingExcessGenerationThresholdWatts = applicationOptions.Value.StartChargingExcessGenerationThresholdWatts;
         var stopChargingPullingFromGridThresholdWatts = applicationOptions.Value.StopChargingPullingFromGridThresholdWatts;
         
-        var orderedInverterStatuses = inverterStatusResult.Result.OrderBy(s => s.Key).ToList();
+        var orderedInverterStatuses = inverterTelemetryResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;
         
         logger.LogTrace("Most recent reading: Grid: {Grid}W. PV: {PV}W", mostRecentStatus.Grid, mostRecentStatus.Photovoltaic);
