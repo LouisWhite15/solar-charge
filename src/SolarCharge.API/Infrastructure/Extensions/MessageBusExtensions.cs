@@ -1,4 +1,4 @@
-﻿using SolarCharge.API.Domain.SeedWork;
+﻿using SolarCharge.API.Application.Shared;
 using SolarCharge.API.Infrastructure.DataAccess;
 using Wolverine;
 
@@ -6,9 +6,9 @@ namespace SolarCharge.API.Infrastructure.Extensions;
 
 public static class MessageBusExtensions
 {
-    public static async Task DispatchDomainEventsAsync(this IMessageBus bus, ApplicationContext dbContext)
+    public static async Task DispatchDomainEventsAsync(this IMessageBus bus, ApplicationDbContext dbDbContext)
     {
-        var domainEntities = dbContext.ChangeTracker
+        var domainEntities = dbDbContext.ChangeTracker
             .Entries<Entity>()
             .Where(x => x.Entity.DomainEvents.Count != 0)
             .ToList();

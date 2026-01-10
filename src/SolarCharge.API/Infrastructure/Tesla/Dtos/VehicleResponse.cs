@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Models;
 
 namespace SolarCharge.API.Infrastructure.Tesla.Dtos;

@@ -1,7 +1,6 @@
 using SolarCharge.API.Application;
+using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.HostedServices;
-using SolarCharge.API.Application.Models;
-using SolarCharge.API.Application.Queries;
 using SolarCharge.API.Application.Services;
 using SolarCharge.API.Application.Services.ChargingStrategies;
 
@@ -21,9 +20,6 @@ public static class ApplicationExtensions
             configuration.GetSection(FeatureOptions.Features));
         
         services.AddHttpClient();
-        
-        // Queries
-        services.AddScoped<IVehicleQueries, VehicleQueries>();
         
         // Services
         services.AddKeyedTransient<IChargingStrategy, UnknownChargeStateStrategy>(VehicleStateDto.Unknown);

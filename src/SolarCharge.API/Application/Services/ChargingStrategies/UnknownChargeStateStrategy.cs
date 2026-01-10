@@ -1,4 +1,4 @@
-﻿using SolarCharge.API.Application.Commands;
+﻿using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Models;
 using Wolverine;
 

@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
+using SolarCharge.API.Application.Features.TeslaAuth;
 using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
 using SolarCharge.API.Infrastructure.Tesla.Dtos;
 

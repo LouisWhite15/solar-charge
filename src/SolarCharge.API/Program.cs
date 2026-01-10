@@ -35,7 +35,7 @@ try
         .AddSqlite(builder.Configuration)
         .AddInfluxDb(builder.Configuration)
         .AddInverter(builder.Configuration)
-        .AddTesla(builder.Configuration)
+        .AddTeslaAuth(builder.Configuration)
         .AddChatBot(builder.Configuration);
     
     builder.Services.AddControllers();

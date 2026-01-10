@@ -10,7 +10,7 @@ public static class SqliteExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationContext>(
+        services.AddDbContext<ApplicationDbContext>(
             options => options.UseSqlite(configuration.GetValue<string>("Persistence:ConnectionString")),
                 
                 // This is weirdly important! Using Singleton scoping
@@ -27,7 +27,7 @@ public static class SqliteExtensions
         logger.ForContext<Program>().Information("Migrating database");
         
         using var scope = services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         dbContext.Database.Migrate();
         
         logger.ForContext<Program>().Information("Database migrated");

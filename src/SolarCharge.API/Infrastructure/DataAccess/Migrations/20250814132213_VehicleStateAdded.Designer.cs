@@ -10,7 +10,7 @@ using SolarCharge.API.Infrastructure.DataAccess;
 
 namespace SolarCharge.API.Infrastructure.DataAccess.Migrations
 {
-    [DbContext(typeof(ApplicationContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250814132213_VehicleStateAdded")]
     partial class VehicleStateAdded
     {
