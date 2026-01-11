@@ -80,7 +80,7 @@
 
 @code {
     [Inject]
-    private ICommandBus CommandBus { get; set; }
+    private IMessageBus MessageBus { get; set; }
     
     [Inject]
     private ITeslaAuthenticationService TeslaAuthenticationService { get; set; }
@@ -113,7 +113,7 @@
             return;
 
         var authenticateCommand = new AuthenticateTeslaCommand(UrlWithCode, AuthenticationParameters);
-        _authenticationSuccessful = await CommandBus.InvokeAsync<bool>(authenticateCommand);
+        _authenticationSuccessful = await MessageBus.InvokeAsync<bool>(authenticateCommand);
     }
 
     private static void SubmitProvidedTokens()

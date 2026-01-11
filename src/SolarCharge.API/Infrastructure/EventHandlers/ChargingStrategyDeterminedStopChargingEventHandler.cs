@@ -7,7 +7,7 @@ namespace SolarCharge.API.Infrastructure.EventHandlers;
 
 public class ChargingStrategyDeterminedStopChargingEventHandler(
     ILogger<ChargingStrategyDeterminedStopChargingEventHandler> logger,
-    ICommandBus commandBus) : IWolverineHandler
+    IMessageBus messageBus) : IWolverineHandler
 {
     public async ValueTask HandleAsync(ChargingStrategyDeterminedStopChargingEvent @event, CancellationToken cancellationToken = default)
     {
@@ -15,6 +15,6 @@ public class ChargingStrategyDeterminedStopChargingEventHandler(
             ChatMessageType.StopCharging,
             ChatMessageTemplates.StopCharging(@event.WattsPulledFromGrid));
         
-        await commandBus.InvokeAsync(sendChatMessageCommand, cancellationToken);
+        await messageBus.InvokeAsync(sendChatMessageCommand, cancellationToken);
     }
 }
