@@ -14,8 +14,8 @@ public class InverterTelemetryHostedService(
     protected override async Task DoWorkAsync(CancellationToken cancellationToken = default)
     {
         using var scope = serviceScopeFactory.CreateScope();
-        var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+        var commandBus = scope.ServiceProvider.GetRequiredService<ICommandBus>();
         
-        await messageBus.InvokeAsync(new CollectInverterTelemetryCommand(), cancellationToken);
+        await commandBus.InvokeAsync(new CollectInverterTelemetryCommand(), cancellationToken);
     }
 }

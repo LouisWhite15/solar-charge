@@ -16,10 +16,10 @@ public class RefreshTeslaAccessTokenHostedService(
         logger.LogTrace("Refresh token job started");
         
         var scope = serviceScopeFactory.CreateScope();
-        var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+        var commandBus = scope.ServiceProvider.GetRequiredService<ICommandBus>();
         
         var refreshCommand = new RefreshTeslaCommand();
-        await messageBus.InvokeAsync(refreshCommand, cancellationToken);
+        await commandBus.InvokeAsync(refreshCommand, cancellationToken);
         
         logger.LogTrace("Refresh token job completed");
     }

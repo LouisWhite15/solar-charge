@@ -17,7 +17,7 @@ public class TeslaClient : ITeslaClient
 {
     private readonly ILogger<TeslaClient> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IMessageBus _messageBus;
+    private readonly ICommandBus _commandBus;
     private readonly IOptions<TeslaOptions> _teslaOptions;
 
     private readonly JsonSerializerOptions _jsonSerializerOptions;
@@ -25,12 +25,12 @@ public class TeslaClient : ITeslaClient
     public TeslaClient(
         ILogger<TeslaClient> logger,
         IHttpClientFactory httpClientFactory,
-        IMessageBus messageBus,
+        ICommandBus commandBus,
         IOptions<TeslaOptions> teslaOptions)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _messageBus = messageBus;
+        _commandBus = commandBus;
         _teslaOptions = teslaOptions;
         
         _jsonSerializerOptions = new JsonSerializerOptions
@@ -45,7 +45,7 @@ public class TeslaClient : ITeslaClient
     {
         _logger.LogTrace("Retrieving vehicle id from Tesla");
 
-        var teslaAuthTokens = await _messageBus.InvokeAsync<TeslaAuthentication?>(new GetTeslaAuthenticationTokenQuery(), cancellationToken);
+        var teslaAuthTokens = await _commandBus.InvokeAsync<TeslaAuthentication?>(new GetTeslaAuthenticationTokenQuery(), cancellationToken);
         if (teslaAuthTokens is null)
         {
             _logger.LogError("Not authenticated with Tesla");
@@ -76,7 +76,7 @@ public class TeslaClient : ITeslaClient
     {
         _logger.LogTrace("Retrieving charge state from Tesla");
 
-        var teslaAuthTokens = await _messageBus.InvokeAsync<TeslaAuthentication?>(new GetTeslaAuthenticationTokenQuery(), cancellationToken);
+        var teslaAuthTokens = await _commandBus.InvokeAsync<TeslaAuthentication?>(new GetTeslaAuthenticationTokenQuery(), cancellationToken);
         if (teslaAuthTokens is null)
         {
             _logger.LogError("Not authenticated with Tesla");

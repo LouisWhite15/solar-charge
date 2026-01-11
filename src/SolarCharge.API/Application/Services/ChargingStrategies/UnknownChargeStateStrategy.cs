@@ -7,8 +7,7 @@ using Wolverine;
 namespace SolarCharge.API.Application.Services.ChargingStrategies;
 
 public class UnknownChargeStateStrategy(
-    ILogger<UnknownChargeStateStrategy> logger,
-    IMessageBus bus)
+    ILogger<UnknownChargeStateStrategy> logger)
     : IChargingStrategy
 {
     public Task Evaluate(InverterTelemetryResult inverterTelemetryResult, VehicleDto vehicle)

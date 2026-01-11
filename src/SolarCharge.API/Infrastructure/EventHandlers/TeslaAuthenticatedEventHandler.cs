@@ -6,7 +6,7 @@ namespace SolarCharge.API.Infrastructure.EventHandlers;
 
 public class TeslaAuthenticatedEventHandler(
     ILogger<TeslaAuthenticatedEventHandler> logger,
-    IMessageBus bus)
+    ICommandBus commandBus)
     : IWolverineHandler
 {
     public async ValueTask HandleAsync(TeslaAuthenticatedEvent _, CancellationToken cancellationToken)
@@ -17,6 +17,6 @@ public class TeslaAuthenticatedEventHandler(
         
         logger.LogInformation("Sending {CommandType}", nameof(RegisterVehicleFromTeslaCommand));
 
-        await bus.InvokeAsync(command, cancellationToken);
+        await commandBus.InvokeAsync(command, cancellationToken);
     }
 }

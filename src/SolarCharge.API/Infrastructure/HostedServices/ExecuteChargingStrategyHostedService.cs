@@ -22,9 +22,9 @@ public class ExecuteChargingStrategyHostedService(
         
         // Retrieve solar generation values
         using var scope = serviceScopeFactory.CreateScope();
-        var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+        var commandBus = scope.ServiceProvider.GetRequiredService<ICommandBus>();
         
-        var influxInverterStatusResult = await messageBus.InvokeAsync<InverterTelemetryResult>(new SearchInverterTelemetryQuery(TimeSpan.FromMinutes(-20)), cancellationToken);
+        var influxInverterStatusResult = await commandBus.InvokeAsync<InverterTelemetryResult>(new SearchInverterTelemetryQuery(TimeSpan.FromMinutes(-20)), cancellationToken);
         if (influxInverterStatusResult.Result.Count == 0)
         {
             logger.LogWarning("No inverter telemetry found. Not enough data to evaluate a charging strategy");
@@ -32,7 +32,7 @@ public class ExecuteChargingStrategyHostedService(
         }
         
         // Retrieve vehicle
-        var vehicle = await messageBus.InvokeAsync<VehicleDto?>(new GetVehicleQuery(), cancellationToken);
+        var vehicle = await commandBus.InvokeAsync<VehicleDto?>(new GetVehicleQuery(), cancellationToken);
         if (vehicle is null)
         {
             logger.LogWarning("Vehicle not found. No charging strategy will be executed");
@@ -41,10 +41,10 @@ public class ExecuteChargingStrategyHostedService(
         
         // Update state from Tesla
         logger.LogInformation("Sending {CommandName}", nameof(UpdateVehicleStateFromTeslaCommand));
-        await messageBus.InvokeAsync(new UpdateVehicleStateFromTeslaCommand(vehicle.Id), cancellationToken);
+        await commandBus.InvokeAsync(new UpdateVehicleStateFromTeslaCommand(vehicle.Id), cancellationToken);
         
         // Retrieve the updated state of the vehicle
-        vehicle = await messageBus.InvokeAsync<VehicleDto?>(new GetVehicleQuery(), cancellationToken);
+        vehicle = await commandBus.InvokeAsync<VehicleDto?>(new GetVehicleQuery(), cancellationToken);
         if (vehicle is null)
         {
             logger.LogWarning("Vehicle not found. No charging strategy will be executed");
