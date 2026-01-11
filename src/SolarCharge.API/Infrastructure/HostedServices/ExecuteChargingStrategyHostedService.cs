@@ -1,11 +1,10 @@
 using Microsoft.Extensions.Options;
 using SolarCharge.API.Application;
-using SolarCharge.API.Application.Features.Inverter.Domain;
+using SolarCharge.API.Application.Features.ChargingStrategy.Commands;
 using SolarCharge.API.Application.Features.Inverter.Queries;
 using SolarCharge.API.Application.Features.Vehicles;
+using SolarCharge.API.Application.Features.Vehicles.Commands;
 using SolarCharge.API.Application.Features.Vehicles.Queries;
-using SolarCharge.API.Application.Features.Vehicles.UpdateVehicleStateFromTesla;
-using SolarCharge.API.Application.Services.ChargingStrategies;
 using Wolverine;
 
 namespace SolarCharge.API.Infrastructure.HostedServices;
@@ -20,12 +19,12 @@ public class ExecuteChargingStrategyHostedService(
     {
         logger.LogDebug("Evaluating solar generation");
         
-        // Retrieve solar generation values
         using var scope = serviceScopeFactory.CreateScope();
         var commandBus = scope.ServiceProvider.GetRequiredService<ICommandBus>();
         
-        var influxInverterStatusResult = await commandBus.InvokeAsync<InverterTelemetryResult>(new SearchInverterTelemetryQuery(TimeSpan.FromMinutes(-20)), cancellationToken);
-        if (influxInverterStatusResult.Result.Count == 0)
+        // Retrieve solar generation values
+        var inverterTelemetryResult = await commandBus.InvokeAsync<InverterTelemetryResult>(new SearchInverterTelemetryQuery(TimeSpan.FromMinutes(-20)), cancellationToken);
+        if (inverterTelemetryResult.Result.Count == 0)
         {
             logger.LogWarning("No inverter telemetry found. Not enough data to evaluate a charging strategy");
             return;
@@ -39,7 +38,7 @@ public class ExecuteChargingStrategyHostedService(
             return;
         }
         
-        // Update state from Tesla
+        // Update vehicle state from tesla
         logger.LogInformation("Sending {CommandName}", nameof(UpdateVehicleStateFromTeslaCommand));
         await commandBus.InvokeAsync(new UpdateVehicleStateFromTeslaCommand(vehicle.Id), cancellationToken);
         
@@ -51,10 +50,8 @@ public class ExecuteChargingStrategyHostedService(
             return;
         }
         
-        // Execute the charging strategy for the state of the vehicle
-        var chargingStrategy = scope.ServiceProvider.GetRequiredKeyedService<IChargingStrategy>(vehicle.State);
-        
-        logger.LogDebug("Executing charging strategy. State: {ChargeState}. VehicleId: {VehicleId}", vehicle.State, vehicle.Id);
-        await chargingStrategy.Evaluate(influxInverterStatusResult, vehicle);
+        // Execute the charging strategy
+        var executeChargingStrategyCommand = new ExecuteChargingStrategyCommand(vehicle, inverterTelemetryResult);
+        await commandBus.InvokeAsync(executeChargingStrategyCommand, cancellationToken);
     }
 }

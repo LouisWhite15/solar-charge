@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
-using SolarCharge.API.Application.Features.Inverter.Domain;
 using SolarCharge.API.Application.Features.Inverter.Queries;
-using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Models;
+using SolarCharge.API.Application.Services;
 
-namespace SolarCharge.API.Application.Services.ChargingStrategies;
+namespace SolarCharge.API.Application.Features.ChargingStrategy.Services;
 
 public class VehicleNotChargingStrategy(
     ILogger<VehicleNotChargingStrategy> logger,
@@ -12,7 +11,7 @@ public class VehicleNotChargingStrategy(
     INotificationService notificationService)
     : IChargingStrategy
 {
-    public async Task Evaluate(InverterTelemetryResult inverterTelemetryResult, VehicleDto vehicle)
+    public async ValueTask EvaluateAsync(InverterTelemetryResult inverterTelemetryResult, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Evaluating {Strategy}", GetType().Name);
 

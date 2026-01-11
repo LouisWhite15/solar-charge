@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SolarCharge.API.Application.Extensions;
 using SolarCharge.API.Application.Features.Vehicles.Infrastructure;
-using SolarCharge.API.Application.Models;
 using SolarCharge.API.Domain.ValueObjects;
 using SolarCharge.API.Infrastructure.DataAccess;
 using Wolverine;
 
-namespace SolarCharge.API.Application.Features.Vehicles.UpdateVehicleStateFromTesla;
+namespace SolarCharge.API.Application.Features.Vehicles.Commands;
 
 public sealed record UpdateVehicleStateFromTeslaCommand(long VehicleId)
 {
