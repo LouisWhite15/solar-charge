@@ -1,4 +1,4 @@
-namespace SolarCharge.API.Application;
+namespace SolarCharge.API.Application.Features;
 
 public class FeatureOptions
 {
