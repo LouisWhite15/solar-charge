@@ -1,7 +1,5 @@
 using SolarCharge.API.Application.Features.Inverter.Domain;
 using SolarCharge.API.Application.Features.Inverter.Infrastructure;
-using SolarCharge.API.Application.Models;
-using SolarCharge.API.Application.Ports;
 
 namespace SolarCharge.API.Infrastructure.Inverter;
 

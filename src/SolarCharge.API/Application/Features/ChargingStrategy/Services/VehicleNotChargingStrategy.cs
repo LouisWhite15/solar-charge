@@ -1,22 +1,22 @@
 ﻿using Microsoft.Extensions.Options;
+using SolarCharge.API.Application.Features.ChargingStrategy.Events;
 using SolarCharge.API.Application.Features.Inverter.Queries;
-using SolarCharge.API.Application.Models;
-using SolarCharge.API.Application.Services;
+using Wolverine;
 
 namespace SolarCharge.API.Application.Features.ChargingStrategy.Services;
 
 public class VehicleNotChargingStrategy(
     ILogger<VehicleNotChargingStrategy> logger,
-    IOptions<ApplicationOptions> applicationOptions,
-    INotificationService notificationService)
+    IOptions<ChargingStrategyOptions> chargingStrategyOptions,
+    IMessageBus messageBus)
     : IChargingStrategy
 {
     public async ValueTask EvaluateAsync(InverterTelemetryResult inverterTelemetryResult, CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Evaluating {Strategy}", GetType().Name);
 
-        var startChargingExcessGenerationThresholdWatts = applicationOptions.Value.StartChargingExcessGenerationThresholdWatts;
-        var stopChargingPullingFromGridThresholdWatts = applicationOptions.Value.StopChargingPullingFromGridThresholdWatts;
+        var startChargingExcessGenerationThresholdWatts = chargingStrategyOptions.Value.StartChargingExcessGenerationThresholdWatts;
+        var stopChargingPullingFromGridThresholdWatts = chargingStrategyOptions.Value.StopChargingPullingFromGridThresholdWatts;
         
         var orderedInverterStatuses = inverterTelemetryResult.Result.OrderBy(s => s.Key).ToList();
         var mostRecentStatus = orderedInverterStatuses.Last().Value;
@@ -35,8 +35,8 @@ public class VehicleNotChargingStrategy(
             logger.LogDebug("Supplying {GridValue}W to the grid. This exceeds the configured threshold of {Threshold}W",
                 gridAbsoluteWatts,
                 startChargingExcessGenerationThresholdWatts);
-            
-            await notificationService.SendAsync(NotificationType.StartCharging, gridAbsoluteWatts);
+
+            await messageBus.InvokeAsync(new ChargingStrategyDeterminedStartChargingEvent(gridAbsoluteWatts), cancellationToken);
         }
         // If we are pulling more than the configured threshold to stop charging to the grid, we should stop charging
         else if (mostRecentStatus.Grid > stopChargingPullingFromGridThresholdWatts)
@@ -44,7 +44,8 @@ public class VehicleNotChargingStrategy(
             logger.LogDebug("Pulling {GridValue}W from the grid. This exceeds the configured threshold of {Threshold}W",
                 gridAbsoluteWatts,
                 stopChargingPullingFromGridThresholdWatts);
-            await notificationService.SendAsync(NotificationType.StopCharging, gridAbsoluteWatts);
+            
+            await messageBus.InvokeAsync(new ChargingStrategyDeterminedStopChargingEvent(gridAbsoluteWatts), cancellationToken);
         }
         // Do a few more checks for logging purposes
         else switch (mostRecentStatus.Grid)

@@ -1,10 +1,11 @@
 using System.Text.Json;
 using System.Web;
 using SolarCharge.API.Application.Features.TeslaAuth.Domain;
+using SolarCharge.API.Application.Features.TeslaAuth.Events;
 using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
 using Wolverine;
 
-namespace SolarCharge.API.Application.Features.TeslaAuth.Authenticate;
+namespace SolarCharge.API.Application.Features.TeslaAuth.Commands;
 
 public sealed class AuthenticateTeslaCommand(string urlWithCode, Dictionary<string, string> authenticationParameters)
 {

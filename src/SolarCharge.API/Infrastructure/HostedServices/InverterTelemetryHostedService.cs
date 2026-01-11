@@ -7,7 +7,7 @@ namespace SolarCharge.API.Infrastructure.HostedServices;
 
 public class InverterTelemetryHostedService(
     ILogger<InverterTelemetryHostedService> logger,
-    IOptions<ApplicationOptions> applicationOptions,
+    IOptions<InfrastructureOptions> applicationOptions,
     IServiceScopeFactory serviceScopeFactory)
     : AsyncTimedHostedService(logger, applicationOptions.Value.InverterStatusCheckFrequencySeconds)
 {

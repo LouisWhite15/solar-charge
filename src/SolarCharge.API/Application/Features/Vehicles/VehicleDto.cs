@@ -1,5 +1,5 @@
-﻿using SolarCharge.API.Application.Extensions;
-using SolarCharge.API.Application.Features.Vehicles.Domain;
+﻿using SolarCharge.API.Application.Features.Vehicles.Domain;
+using SolarCharge.API.Application.Shared.Extensions;
 using SolarCharge.API.Infrastructure.Tesla.Dtos;
 
 namespace SolarCharge.API.Application.Features.Vehicles;

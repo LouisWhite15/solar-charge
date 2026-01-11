@@ -22,7 +22,7 @@ public static class InverterModule
         services.AddKeyedTransient<IInverterClient, NoOpInverterClientService>(InverterType.Unknown);
         services.AddKeyedTransient<IInverterClient, FroniusInverterClientService>(InverterType.Fronius);
         
-        var featureOptions = configuration.GetSection(FeatureOptions.Features).Get<FeatureOptions>();
+        var featureOptions = configuration.GetSection(FeatureOptions.SectionName).Get<FeatureOptions>();
         if (featureOptions?.IsInfluxDbEnabled is true)
         {
             services.AddSingleton<IInverterTelemetryRepository, InfluxDbInverterTelemetryRepository>();

@@ -1,9 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
-using SolarCharge.API.Infrastructure.Tesla;
 
 namespace SolarCharge.API.Application.Features.TeslaAuth.Services;
 

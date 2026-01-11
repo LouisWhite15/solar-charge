@@ -1,9 +1,12 @@
 using Serilog;
-using SolarCharge.API.Api.Modules;
+using SolarCharge.API.Application;
 using SolarCharge.API.Application.Features.ChargingStrategy;
+using SolarCharge.API.Application.Features.ChatBot;
 using SolarCharge.API.Application.Features.Inverter;
 using SolarCharge.API.Application.Features.TeslaAuth;
 using SolarCharge.API.Application.Features.Vehicles;
+using SolarCharge.API.Infrastructure;
+using SolarCharge.API.Infrastructure.Database;
 using SolarCharge.API.Web.Components;
 using Wolverine;
 
@@ -35,12 +38,13 @@ try
 
     builder.Services
         .AddApplication(builder.Configuration)
-        .AddChargingStrategy()
+        .AddChargingStrategy(builder.Configuration)
         .AddInverter(builder.Configuration)
-        .AddTeslaAuth(builder.Configuration)
+        .AddTesla(builder.Configuration)
         .AddVehicle(builder.Configuration)
-        .AddSqlite(builder.Configuration)
-        .AddChatBot(builder.Configuration);
+        .AddDatabase(builder.Configuration)
+        .AddChatBot(builder.Configuration)
+        .AddInfrastructure(builder.Configuration);
     
     builder.Services.AddControllers();
 

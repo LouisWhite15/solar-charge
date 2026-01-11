@@ -8,7 +8,7 @@ namespace SolarCharge.API.Infrastructure.HostedServices;
 public class RefreshTeslaAccessTokenHostedService(
     ILogger<RefreshTeslaAccessTokenHostedService> logger,
     IServiceScopeFactory serviceScopeFactory,
-    IOptions<ApplicationOptions> applicationOptions) 
+    IOptions<InfrastructureOptions> applicationOptions) 
     : AsyncTimedHostedService(logger, applicationOptions.Value.RefreshTeslaAccessTokenFrequencySeconds)
 {
     protected override async Task DoWorkAsync(CancellationToken cancellationToken = default)

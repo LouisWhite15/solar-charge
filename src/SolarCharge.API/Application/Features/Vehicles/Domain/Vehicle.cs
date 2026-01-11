@@ -1,5 +1,4 @@
 ﻿using SolarCharge.API.Application.Shared;
-using SolarCharge.API.Domain.ValueObjects;
 
 namespace SolarCharge.API.Application.Features.Vehicles.Domain;
 

@@ -1,12 +1,10 @@
-namespace SolarCharge.API.Application;
+namespace SolarCharge.API.Infrastructure;
 
-public class ApplicationOptions
+public class InfrastructureOptions
 {
-    public const string Application = "Application";
+    public const string SectionName = "Infrastructure";
 
     public int InverterStatusCheckFrequencySeconds { get; set; } = 120; // Every 2 minutes by default
     public int EvaluateSolarGenerationFrequencySeconds { get; set; } = 600; // Every 10 minutes by default
     public int RefreshTeslaAccessTokenFrequencySeconds { get; set; } = 7200; // Every 2 hours by default
-    public int StartChargingExcessGenerationThresholdWatts { get; set; } = 2000;
-    public int StopChargingPullingFromGridThresholdWatts { get; set; } = 500;
 }

@@ -1,8 +1,7 @@
 ﻿using SolarCharge.API.Application.Features.Vehicles;
-using SolarCharge.API.Application.Models;
-using SolarCharge.API.Domain.ValueObjects;
+using SolarCharge.API.Application.Features.Vehicles.Domain;
 
-namespace SolarCharge.API.Application.Extensions;
+namespace SolarCharge.API.Application.Shared.Extensions;
 
 public static class VehicleStateExtensions
 {

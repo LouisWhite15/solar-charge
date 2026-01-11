@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using SolarCharge.API.Application.Features.Inverter.Domain;
 using SolarCharge.API.Application.Features.Inverter.Infrastructure;
 using SolarCharge.API.Application.Features.Inverter.Queries;
-using SolarCharge.API.Application.Services;
 using SolarCharge.API.Application.Shared;
 using SolarCharge.API.Infrastructure.InfluxDB.Extensions;
 

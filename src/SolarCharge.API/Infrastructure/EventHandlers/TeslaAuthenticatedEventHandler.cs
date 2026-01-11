@@ -1,4 +1,4 @@
-﻿using SolarCharge.API.Application.Features.TeslaAuth.Authenticate;
+﻿using SolarCharge.API.Application.Features.TeslaAuth.Events;
 using SolarCharge.API.Application.Features.Vehicles.Commands;
 using Wolverine;
 

@@ -1,4 +1,4 @@
-namespace SolarCharge.API.Domain.ValueObjects;
+namespace SolarCharge.API.Application.Features.Vehicles.Domain;
 
 public enum VehicleState
 {

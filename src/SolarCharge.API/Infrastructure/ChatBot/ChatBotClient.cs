@@ -2,15 +2,15 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
-using SolarCharge.API.Application.Ports;
+using SolarCharge.API.Application.Features.ChatBot.Infrastructure;
 
 namespace SolarCharge.API.Infrastructure.ChatBot;
 
-public class ChatBotService(
-    ILogger<ChatBotService> logger,
+public class ChatBotClient(
+    ILogger<ChatBotClient> logger,
     IHttpClientFactory httpClientFactory,
     IOptions<ChatBotOptions> options)
-    : IChatBot
+    : IChatBotClient
 {
     private readonly string _chatBotBaseUrl = options.Value.Url;
 
@@ -20,7 +20,7 @@ public class ChatBotService(
         NumberHandling = JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString
     };
 
-    public async Task SendMessageAsync(string messageText)
+    public async Task SendMessageAsync(string messageText, CancellationToken cancellationToken = default)
     {
         logger.LogDebug("Sending message to user...");
 
@@ -33,7 +33,8 @@ public class ChatBotService(
         var jsonRequest = JsonSerializer.Serialize(request, JsonSerializerOptions);
         var response = await httpClient.PostAsync(
             $"{_chatBotBaseUrl}/telegram/send",
-            new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
+            new StringContent(jsonRequest, Encoding.UTF8, "application/json"),
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
         

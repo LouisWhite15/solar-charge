@@ -7,9 +7,6 @@ public static class VehicleModule
 {
     public static IServiceCollection AddVehicle(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<TeslaOptions>(
-            configuration.GetSection(TeslaOptions.SectionName));
-
         services.AddTransient<ITeslaClient, TeslaClient>();
 
         return services;

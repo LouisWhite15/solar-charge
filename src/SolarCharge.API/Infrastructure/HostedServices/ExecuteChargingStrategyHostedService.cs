@@ -12,7 +12,7 @@ namespace SolarCharge.API.Infrastructure.HostedServices;
 public class ExecuteChargingStrategyHostedService(
     ILogger<ExecuteChargingStrategyHostedService> logger,
     IServiceScopeFactory serviceScopeFactory,
-    IOptions<ApplicationOptions> applicationOptions)
+    IOptions<InfrastructureOptions> applicationOptions)
     : AsyncTimedHostedService(logger, applicationOptions.Value.EvaluateSolarGenerationFrequencySeconds)
 {
     protected override async Task DoWorkAsync(CancellationToken cancellationToken = default)

@@ -6,7 +6,7 @@ namespace SolarCharge.API.Application.Features.TeslaAuth;
 
 public static class TeslaModule
 {
-    public static IServiceCollection AddTeslaAuth(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddTesla(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<TeslaOptions>(
             configuration.GetSection(TeslaOptions.SectionName));

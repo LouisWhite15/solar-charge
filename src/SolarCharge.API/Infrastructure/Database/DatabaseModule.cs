@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using SolarCharge.API.Infrastructure.DataAccess;
 using ILogger = Serilog.ILogger;
 
-namespace SolarCharge.API.Api.Modules;
+namespace SolarCharge.API.Infrastructure.Database;
 
-public static class SqliteExtensions
+public static class DatabaseModule
 {
-    public static IServiceCollection AddSqlite(
+    public static IServiceCollection AddDatabase(
         this IServiceCollection services,
         IConfiguration configuration)
     {

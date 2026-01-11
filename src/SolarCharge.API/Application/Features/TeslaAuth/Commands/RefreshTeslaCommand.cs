@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
 using SolarCharge.API.Application.Features.TeslaAuth.Domain;
 using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
-using SolarCharge.API.Application.Services;
 using SolarCharge.API.Application.Shared;
 using Wolverine;
 

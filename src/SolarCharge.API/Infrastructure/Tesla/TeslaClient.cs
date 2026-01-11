@@ -7,7 +7,6 @@ using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
 using SolarCharge.API.Application.Features.TeslaAuth.Queries;
 using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Features.Vehicles.Infrastructure;
-using SolarCharge.API.Application.Models;
 using SolarCharge.API.Infrastructure.Tesla.Dtos;
 using Wolverine;
 

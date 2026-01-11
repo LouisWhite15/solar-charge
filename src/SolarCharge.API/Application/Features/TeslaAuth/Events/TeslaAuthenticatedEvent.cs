@@ -1,3 +1,3 @@
-﻿namespace SolarCharge.API.Application.Features.TeslaAuth.Authenticate;
+﻿namespace SolarCharge.API.Application.Features.TeslaAuth.Events;
 
 public sealed record TeslaAuthenticatedEvent();
