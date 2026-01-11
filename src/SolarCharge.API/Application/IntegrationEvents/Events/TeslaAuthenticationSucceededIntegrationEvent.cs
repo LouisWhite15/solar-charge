@@ -1,3 +1,0 @@
-﻿namespace SolarCharge.API.Application.IntegrationEvents.Events;
-
-public sealed record TeslaAuthenticationSucceededIntegrationEvent;

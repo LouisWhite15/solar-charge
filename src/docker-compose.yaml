@@ -30,11 +30,11 @@ services:
       Inverter__Url: "http://192.168.1.51"
       InfluxDb__Url: "http://influxdb2:8086"
       InfluxDb__Token: AdminToken0==
-      Application__InverterStatusCheckFrequencySeconds: 120
-      Application__EvaluateSolarGenerationFrequencySeconds: 600
-      Application__RefreshTeslaAccessTokenFrequencySeconds: 7200
-      Application__StartChargingExcessGenerationThresholdWatts: 2000
-      Application__StopChargingPullingFromGridThresholdWatts: 500
+      Infrastructure__InverterStatusCheckFrequencySeconds: 120
+      Infrastructure__EvaluateSolarGenerationFrequencySeconds: 600
+      Infrastructure__RefreshTeslaAccessTokenFrequencySeconds: 7200
+      ChargingStrategy__StartChargingExcessGenerationThresholdWatts: 2000
+      ChargingStrategy__StopChargingPullingFromGridThresholdWatts: 500
       Persistence__ConnectionString: "Data Source=/persistence/app.db"
       ChatBot__Url: "http://solar-charge-telegram:5010"
       Tesla__EncryptionKey: "YOUR_SECURE_ENCRYPTION_KEY"
