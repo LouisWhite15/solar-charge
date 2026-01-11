@@ -9,12 +9,12 @@ public sealed record ExecuteChargingStrategyCommand(VehicleDto Vehicle, Inverter
 {
     public class Handler(
         ILogger<Handler> logger,
-        IServiceScopeFactory scopeFactory)
+        IServiceProvider serviceProvider)
         : IWolverineHandler
     {
         public async ValueTask HandleAsync(ExecuteChargingStrategyCommand command, CancellationToken cancellationToken = default)
         {
-            var scope = scopeFactory.CreateScope();
+            var scope = serviceProvider.CreateScope();
             var chargingStrategy = scope.ServiceProvider.GetRequiredKeyedService<IChargingStrategy>(command.Vehicle.State);
         
             logger.LogDebug("Executing charging strategy. State: {ChargeState}. VehicleId: {VehicleId}", command.Vehicle.State, command.Vehicle.Id);

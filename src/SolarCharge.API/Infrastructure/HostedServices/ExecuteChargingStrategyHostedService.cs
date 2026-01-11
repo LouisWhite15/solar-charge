@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Options;
-using SolarCharge.API.Application;
 using SolarCharge.API.Application.Features.ChargingStrategy.Commands;
 using SolarCharge.API.Application.Features.Inverter.Queries;
 using SolarCharge.API.Application.Features.Vehicles;
