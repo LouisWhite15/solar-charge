@@ -10,7 +10,7 @@ public static class ChatBotModule
         var featureOptions = configuration.GetSection(FeatureOptions.SectionName).Get<FeatureOptions>();
         
         services.Configure<ChatBotOptions>(
-            configuration.GetSection(ChatBotOptions.ChatBot));
+            configuration.GetSection(ChatBotOptions.SectionName));
 
         services.AddSingleton<ILastChatMessageCache, LastChatMessageCache>();
 

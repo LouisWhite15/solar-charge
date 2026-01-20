@@ -12,10 +12,10 @@ public static class InverterModule
         IConfiguration configuration)
     {
         services.Configure<InverterOptions>(
-            configuration.GetSection(InverterOptions.Inverter));
+            configuration.GetSection(InverterOptions.SectionName));
         
         services.Configure<InfluxDbOptions>(
-            configuration.GetSection(InfluxDbOptions.InfluxDb));
+            configuration.GetSection(InfluxDbOptions.SectionName));
         
         services.AddTransient<IInverterClient, InverterClient>();
         
