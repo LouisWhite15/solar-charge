@@ -8,7 +8,7 @@ using Wolverine;
 
 namespace SolarCharge.API.Application.Features.Vehicles.Commands;
 
-public sealed record UpdateVehicleFromTeslaCommand(long VehicleId)
+public sealed record UpdateVehicleStateFromTeslaCommand(long VehicleId)
 {
     public class Handler(
         ILogger<Handler> logger,
@@ -17,9 +17,9 @@ public sealed record UpdateVehicleFromTeslaCommand(long VehicleId)
         IClock clock)
         : IWolverineHandler
     {
-        public async ValueTask HandleAsync(UpdateVehicleFromTeslaCommand command, CancellationToken cancellationToken = default)
+        public async ValueTask HandleAsync(UpdateVehicleStateFromTeslaCommand command, CancellationToken cancellationToken = default)
         {
-            logger.LogTrace("Handling {CommandType}", nameof(UpdateVehicleFromTeslaCommand));
+            logger.LogTrace("Handling {CommandType}", nameof(UpdateVehicleStateFromTeslaCommand));
         
             var vehicle = await dbContext.Vehicles.FirstOrDefaultAsync(cancellationToken);
             if (vehicle is null)
