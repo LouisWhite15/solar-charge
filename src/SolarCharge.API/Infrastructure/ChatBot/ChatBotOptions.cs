@@ -2,7 +2,7 @@
 
 public class ChatBotOptions
 {
-    public const string ChatBot = "ChatBot";
+    public const string SectionName = "ChatBot";
     
     public string Url { get; set; } = string.Empty;
 }

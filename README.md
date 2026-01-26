@@ -1,6 +1,6 @@
 # ⚡ SolarCharge
 
-SolarCharge is a small self-hosted application designed to run on an always-on device. It integrates with your solar inverter and Tesla to manage EV charging intelligently — notifying you to start and stop charging based on your solar PV generation.
+SolarCharge is a small self-hosted application designed to run on an always-on device. It integrates with your solar inverter and Tesla to manage EV charging intelligently - notifying you to start and stop charging based on your solar PV generation.
 
 ## 🧾 Overview
 
