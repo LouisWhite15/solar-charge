@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SolarCharge.API.Application.Features.Vehicles.Domain;
 using SolarCharge.API.Application.Features.Vehicles.Infrastructure;
+using SolarCharge.API.Application.Shared;
 using SolarCharge.API.Application.Shared.Extensions;
 using SolarCharge.API.Infrastructure.DataAccess;
+using SolarCharge.API.Infrastructure.Database;
 using Wolverine;
 
 namespace SolarCharge.API.Application.Features.Vehicles.Commands;
@@ -12,7 +14,8 @@ public sealed record RegisterVehicleFromTeslaCommand
     public class Handler(
         ILogger<Handler> logger,
         ITeslaClient teslaClient,
-        ApplicationDbContext dbContext)
+        ApplicationDbContext dbContext,
+        IClock clock)
         : IWolverineHandler
     {
         public async ValueTask HandleAsync(RegisterVehicleFromTeslaCommand _, CancellationToken cancellationToken)
@@ -50,7 +53,8 @@ public sealed record RegisterVehicleFromTeslaCommand
             var vehicle = new Vehicle(
                 vehicleDetails.Id,
                 vehicleDetails.DisplayName,
-                vehicleState?.State.ToDomain() ?? VehicleState.Unknown);
+                vehicleState?.State.ToDomain() ?? VehicleState.Unknown,
+                clock.Now);
         
             await dbContext.Vehicles.AddAsync(vehicle, cancellationToken);
             await dbContext.SaveEntitiesAsync(cancellationToken);

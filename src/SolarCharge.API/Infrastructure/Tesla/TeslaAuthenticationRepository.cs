@@ -4,8 +4,9 @@ using SolarCharge.API.Application.Features.TeslaAuth;
 using SolarCharge.API.Application.Features.TeslaAuth.Domain;
 using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
 using SolarCharge.API.Infrastructure.DataAccess;
-using SolarCharge.API.Infrastructure.DataAccess.Crypto;
-using SolarCharge.API.Infrastructure.DataAccess.Entities;
+using SolarCharge.API.Infrastructure.Database;
+using SolarCharge.API.Infrastructure.Database.Crypto;
+using SolarCharge.API.Infrastructure.Database.Entities;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
 

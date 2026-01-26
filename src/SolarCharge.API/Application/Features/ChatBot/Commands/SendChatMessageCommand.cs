@@ -26,7 +26,7 @@ public sealed record SendChatMessageCommand(ChatMessageType Type, string Message
             logger.LogInformation("Sending chat message. ChatMessageType: {ChatMessageType}", command.Type);
             await chatBotClient.SendMessageAsync(command.MessageText, cancellationToken);
             
-            await lastChatMessageCache.SetAsync(new ChatMessage(command.Type, clock.UtcNow), cancellationToken);
+            await lastChatMessageCache.SetAsync(new ChatMessage(command.Type, clock.Now), cancellationToken);
         }
     }
 }

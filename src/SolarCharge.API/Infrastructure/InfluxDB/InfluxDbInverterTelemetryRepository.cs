@@ -24,7 +24,7 @@ public class InfluxDbInverterTelemetryRepository(
         using var client = new InfluxDBClient(_url, _token);
         using var write = client.GetWriteApi();
 
-        var now = clock.UtcNow;
+        var now = clock.Now;
         var pvPoint = PointData.Measurement("pv")
             .Tag("inverter", "inverter-status")
             .Field("value", inverterStatus.Photovoltaic)

@@ -25,10 +25,6 @@ public class VehicleNotChargingStrategy(
         
         var gridAbsoluteWatts = Math.Abs(mostRecentStatus.Grid);
         
-        // This is pretty bad
-        // The point of these strategies is to avoid this kind of mess
-        // but while we don't have the proper charging state coming through this will have to do
-        
         // If we are supplying more to the grid than the configured start charging threshold, we should start charging
         if (mostRecentStatus.Grid <= -startChargingExcessGenerationThresholdWatts)
         {

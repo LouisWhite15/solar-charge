@@ -26,7 +26,7 @@ public sealed class RefreshTeslaCommand
             }
             
             var accessTokenExpiry = GetJwtExpiration(existingTokens.AccessToken);
-            var now = clock.UtcNow;
+            var now = clock.Now;
 
             if (accessTokenExpiry.AddHours(-2) >= now)
             {

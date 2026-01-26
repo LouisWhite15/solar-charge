@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SolarCharge.API.Infrastructure.DataAccess;
+using SolarCharge.API.Infrastructure.Database;
 
 #nullable disable
 
@@ -15,9 +15,9 @@ namespace SolarCharge.API.Infrastructure.DataAccess.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
 
-            modelBuilder.Entity("SolarCharge.API.Domain.Entities.Vehicle", b =>
+            modelBuilder.Entity("SolarCharge.API.Application.Features.Vehicles.Domain.Vehicle", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -25,17 +25,25 @@ namespace SolarCharge.API.Infrastructure.DataAccess.Migrations
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("State")
+                    b.Property<bool>("IsCharging")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("LastUpdated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Vehicles");
                 });
 
-            modelBuilder.Entity("SolarCharge.API.Infrastructure.DataAccess.Entities.TeslaAuthenticationEntity", b =>
+            modelBuilder.Entity("SolarCharge.API.Infrastructure.Database.Entities.TeslaAuthenticationEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
