@@ -22,12 +22,6 @@ public sealed record Vehicle(
             return;
         }
         
-        if (State == updatedVehicleState)
-        {
-            // Do not trigger state update if the state isn't updating
-            return;
-        }
-        
         if (State is not VehicleState.Unknown &&
             updatedVehicleState is VehicleState.Unknown)
         {
@@ -35,16 +29,26 @@ public sealed record Vehicle(
             return;
         }
         
-        InferChargingState(now);
+        InferChargingState(updatedVehicleState, now);
+        
+        if (State == updatedVehicleState)
+        {
+            // Do not trigger state update if the state isn't updating
+            return;
+        }
         
         State = updatedVehicleState;
         LastUpdated = now;
     }
 
-    private void InferChargingState(DateTimeOffset now)
+    private void InferChargingState(VehicleState updatedVehicleState, DateTimeOffset now)
     {
+        if (State != VehicleState.Online)
+            return;
+        
         var durationSinceLastUpdate = now - LastUpdated;
-        if (State == VehicleState.Online &&
+        if (!IsCharging &&
+            updatedVehicleState == VehicleState.Online &&
             durationSinceLastUpdate >= TimeSpan.FromMinutes(20))
         {
             // We have to infer at the moment as the API does not provide charging state directly
@@ -52,8 +56,11 @@ public sealed record Vehicle(
             IsCharging = true;
             
             AddDomainEvent(new InferredVehicleChargingEvent(DisplayName));
+            return;
         }
-        else
+        
+        if (IsCharging &&
+            updatedVehicleState != VehicleState.Online)
         {
             // Reset charging state if conditions are not met
             IsCharging = false;
