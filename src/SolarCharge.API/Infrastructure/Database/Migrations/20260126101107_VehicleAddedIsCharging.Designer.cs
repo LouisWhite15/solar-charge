@@ -4,38 +4,49 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SolarCharge.API.Infrastructure.DataAccess;
 using SolarCharge.API.Infrastructure.Database;
 
 #nullable disable
 
-namespace SolarCharge.API.Infrastructure.DataAccess.Migrations
+namespace SolarCharge.API.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250804114156_AddVehicles")]
-    partial class AddVehicles
+    [Migration("20260126101107_VehicleAddedIsCharging")]
+    partial class VehicleAddedIsCharging
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
 
-            modelBuilder.Entity("SolarCharge.API.Application.Models.Vehicle", b =>
+            modelBuilder.Entity("SolarCharge.API.Application.Features.Vehicles.Domain.Vehicle", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ChargeState")
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsCharging")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("LastUpdated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Vehicles");
                 });
 
-            modelBuilder.Entity("SolarCharge.API.Infrastructure.DataAccess.Entities.TeslaAuthenticationEntity", b =>
+            modelBuilder.Entity("SolarCharge.API.Infrastructure.Database.Entities.TeslaAuthenticationEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

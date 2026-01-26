@@ -1,8 +1,7 @@
 ﻿using SolarCharge.API.Application.Shared;
-using SolarCharge.API.Infrastructure.DataAccess;
 using Wolverine;
 
-namespace SolarCharge.API.Infrastructure.Extensions;
+namespace SolarCharge.API.Infrastructure.Database.Extensions;
 
 public static class MessageBusExtensions
 {

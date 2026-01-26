@@ -5,9 +5,7 @@ using Wolverine;
 
 namespace SolarCharge.API.Infrastructure.EventHandlers;
 
-public class ChargingStrategyDeterminedStartChargingEventHandler(
-    ILogger<ChargingStrategyDeterminedStartChargingEventHandler> logger,
-    IMessageBus messageBus) : IWolverineHandler
+public class ChargingStrategyDeterminedStartChargingEventHandler(IMessageBus messageBus) : IWolverineHandler
 {
     public async ValueTask HandleAsync(ChargingStrategyDeterminedStartChargingEvent @event, CancellationToken cancellationToken = default)
     {

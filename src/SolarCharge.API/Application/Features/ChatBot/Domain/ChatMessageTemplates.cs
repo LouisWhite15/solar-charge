@@ -11,4 +11,14 @@ public static class ChatMessageTemplates
     {
         return $"⚠️ <b>Stop charging!</b> Currently pulling <code>{wattsPulledFromGrid}W</code> from the grid";
     }
+    
+    public static string InferredCharging(string displayName)
+    {
+        return $"🔋 <b>{displayName}</b> is now charging (inferred)";
+    }
+    
+    public static string InferredNotCharging(string displayName)
+    {
+        return $"🔌 <b>{displayName}</b> is no longer charging (inferred)";
+    }
 }

@@ -3,7 +3,7 @@ using SolarCharge.API.Application.Features.ChatBot.Infrastructure;
 
 namespace SolarCharge.API.Infrastructure.ChatBot;
 
-public class LastChatMessageCache(ILogger<LastChatMessageCache> logger) : ILastChatMessageCache
+public class LastChatMessageCache : ILastChatMessageCache
 {
     private ChatMessage? _last;
     private readonly Lock _lock = new();

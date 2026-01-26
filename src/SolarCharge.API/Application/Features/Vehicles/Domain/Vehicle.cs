@@ -1,39 +1,64 @@
-﻿using SolarCharge.API.Application.Shared;
+﻿using SolarCharge.API.Application.Features.Vehicles.Events;
+using SolarCharge.API.Application.Shared;
 
 namespace SolarCharge.API.Application.Features.Vehicles.Domain;
 
-public sealed record Vehicle : Entity
+public sealed record Vehicle(
+    long Id,
+    string DisplayName,
+    VehicleState State,
+    DateTimeOffset LastUpdated)
+    : Entity
 {
-    public long Id { get; init; }
-    public string DisplayName { get; init; }
-    public VehicleState State { get; set; }
-    
-    public Vehicle(
-        long id,
-        string displayName,
-        VehicleState state = VehicleState.Unknown)
-    {
-        Id = id;
-        DisplayName = displayName;
-        State = state;
-    }
+    public VehicleState State { get; set; } = State;
+    public bool IsCharging { get; set; }
+    public DateTimeOffset LastUpdated { get; set; } = LastUpdated;
 
-    public void SetState(VehicleState vehicleState)
+    public void UpdateState(VehicleState updatedVehicleState, DateTimeOffset now)
     {
-        // Do not trigger state update if the state isn't updating
-        if (State == vehicleState)
+        if (now <= LastUpdated)
         {
-            return;
-        }
-
-        // Do not update the vehicle state if we knew what it was and now we don't
-        // i.e., store the last known value
-        if (State is not VehicleState.Unknown &&
-            vehicleState is VehicleState.Unknown)
-        {
+            // Ignore out-of-order updates
             return;
         }
         
-        State = vehicleState;
+        if (State == updatedVehicleState)
+        {
+            // Do not trigger state update if the state isn't updating
+            return;
+        }
+        
+        if (State is not VehicleState.Unknown &&
+            updatedVehicleState is VehicleState.Unknown)
+        {
+            // Retain existing state if the update is unknown
+            return;
+        }
+        
+        InferChargingState(now);
+        
+        State = updatedVehicleState;
+        LastUpdated = now;
+    }
+
+    private void InferChargingState(DateTimeOffset now)
+    {
+        var durationSinceLastUpdate = now - LastUpdated;
+        if (State == VehicleState.Online &&
+            durationSinceLastUpdate >= TimeSpan.FromMinutes(20))
+        {
+            // We have to infer at the moment as the API does not provide charging state directly
+            // Based on observation, if the vehicle stays online for more than 20 minutes, it is likely charging (either that or being driven)
+            IsCharging = true;
+            
+            AddDomainEvent(new InferredVehicleChargingEvent(DisplayName));
+        }
+        else
+        {
+            // Reset charging state if conditions are not met
+            IsCharging = false;
+            
+            AddDomainEvent(new InferredVehicleNotChargingEvent(DisplayName));
+        }
     }
 }

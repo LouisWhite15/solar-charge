@@ -38,8 +38,8 @@ public class ExecuteChargingStrategyHostedService(
         }
         
         // Update vehicle state from tesla
-        logger.LogInformation("Sending {CommandName}", nameof(UpdateVehicleStateFromTeslaCommand));
-        await messageBus.InvokeAsync(new UpdateVehicleStateFromTeslaCommand(vehicle.Id), cancellationToken);
+        logger.LogInformation("Sending {CommandName}", nameof(UpdateVehicleFromTeslaCommand));
+        await messageBus.InvokeAsync(new UpdateVehicleFromTeslaCommand(vehicle.Id), cancellationToken);
         
         // Retrieve the updated state of the vehicle
         vehicle = await messageBus.InvokeAsync<VehicleDto?>(new GetVehicleQuery(), cancellationToken);

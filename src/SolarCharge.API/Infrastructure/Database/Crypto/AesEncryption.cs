@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace SolarCharge.API.Infrastructure.DataAccess.Crypto;
+namespace SolarCharge.API.Infrastructure.Database.Crypto;
 
 public static class AesEncryption
 {
