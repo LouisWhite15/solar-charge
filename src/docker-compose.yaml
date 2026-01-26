@@ -23,7 +23,10 @@ services:
       - 5000:5000
     environment:
       ASPNETCORE_URLS: "http://*:5000"
-      Serilog__MinimumLevel__Default: "Verbose"
+      Serilog__MinimumLevel__Default: "Debug"
+      Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore.Query: "Error"
+      Serilog__MinimumLevel__Override__Wolverine.Runtime: "Warning"
+      Serilog__MinimumLevel__Override__JasperFx: "Warning"
       Features__IsInfluxEnabled: true
       Features__IsChatBotEnabled: true
       Inverter__Type: "Fronius"
