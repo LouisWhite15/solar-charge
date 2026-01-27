@@ -1,0 +1,30 @@
+{
+  "response": [
+    {
+      "id": 1111111111111111,
+      "user_id": 3333333333333333,
+      "vehicle_id": 2222222222222222,
+      "vin": "XYZ1A1BC1DE111111",
+      "color": null,
+      "access_type": "OWNER",
+      "display_name": "Redacted",
+      "option_codes": null,
+      "cached_data": "REDACTED_ENCODED_STRING",
+      "mobile_access_disabled": false,
+      "granular_access": { "hide_private": false },
+      "tokens": null,
+      "state": "offline",
+      "in_service": false,
+      "id_s": "1111111111111111",
+      "calendar_enabled": true,
+      "api_version": 90,
+      "backseat_token": null,
+      "backseat_token_updated_at": null,
+      "ble_autopair_enrolled": false,
+      "device_type": "vehicle",
+      "command_signing": "required",
+      "release_notes_supported": true
+    }
+  ],
+  "count": 1
+}

@@ -1,7 +1,6 @@
 ﻿using Shouldly;
 using SolarCharge.API.Application.Features.Vehicles.Domain;
 using SolarCharge.API.Application.Features.Vehicles.Events;
-using Xunit;
 
 namespace SolarCharge.API.Tests.Vehicles;
 
