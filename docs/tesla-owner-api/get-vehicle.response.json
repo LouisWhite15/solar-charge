@@ -1,0 +1,21 @@
+{
+  "response": {
+    "id": 1111111111111111,
+    "vehicle_id": 2222222222222222,
+    "vin": "XYZ1A1BC1DE111111",
+    "color": null,
+    "access_type": "OWNER",
+    "display_name": "Redacted",
+    "option_codes": null,
+    "granular_access": { "hide_private": false },
+    "tokens": null,
+    "state": "offline",
+    "in_service": false,
+    "id_s": "1111111111111111",
+    "calendar_enabled": true,
+    "api_version": 90,
+    "backseat_token": null,
+    "backseat_token_updated_at": null,
+    "ble_autopair_enrolled": false
+  }
+}
