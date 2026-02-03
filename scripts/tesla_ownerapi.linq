@@ -33,16 +33,24 @@ async Task Main()
 
 	var teslaVehicleId = products.Products.Single().Id;
 	
-	var stopwatch = Stopwatch.StartNew();
 	var vehicleResponse = await httpClient.GetAsync($"/api/1/vehicles/{teslaVehicleId}");
 	
 	var vehicleContent = await vehicleResponse.Content.ReadAsStringAsync();
-	vehicleContent.Dump("vehicle");
+	vehicleContent.Dump("Vehicle");
 
-	var vehicleData = JsonSerializer.Deserialize<VehicleResponse>(vehicleContent, jsonSerializerOptions);
-	vehicleData.Dump("Vehicle");
+	var vehicleDto = JsonSerializer.Deserialize<VehicleResponse>(vehicleContent, jsonSerializerOptions);
+	vehicleDto.Dump("Vehicle");
+
+	var vehicleDataResponse = await httpClient.GetAsync($"/api/1/vehicles/{teslaVehicleId}/vehicle_data");
+
+	var vehicleDataContent = await vehicleDataResponse.Content.ReadAsStringAsync();
+	vehicleDataContent.Dump("Vehicle Data");
+
+	var vehicleDataDto = JsonSerializer.Deserialize<VehicleDataResponse>(vehicleDataContent, jsonSerializerOptions);
+	vehicleDataDto.Dump("Vehicle Data");
 }
 
+// Products
 public class ProductsResponse
 {
 	[JsonPropertyName("response")]
@@ -54,12 +62,14 @@ public class Product
 	public long Id { get; set; }
 }
 
+// Vehicle
 public class VehicleResponse
 {
-	public VehicleData Response { get; set; }
+	public VehicleDto Response { get; set; }
+	public string Error { get; set; }
 }
 
-public class VehicleData
+public class VehicleDto
 {
 	public long Id { get; set; }
 
@@ -76,3 +86,32 @@ public enum VehicleStateDto
 	Asleep = 2,
 	Online = 3
 }
+
+// Vehicle Data
+public class VehicleDataResponse
+{
+	public VehicleDataDto Response { get; set; }
+	public string Error { get; set; }
+}
+
+public class VehicleDataDto
+{
+	public long Id { get; set; }
+	
+	[JsonPropertyName("charge_state")]
+	public ChargeStateDto ChargeState { get; set; }
+}
+
+public class ChargeStateDto
+{
+	[JsonPropertyName("charging_state")]
+	public ChargingStateDto ChargingState { get; set; }
+}
+
+public enum ChargingStateDto
+{
+	Unknown = 0,
+	Charging = 1,
+	Complete = 2,
+}
+
