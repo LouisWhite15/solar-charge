@@ -14,11 +14,11 @@ public static class ChatMessageTemplates
     
     public static string InferredCharging(string displayName)
     {
-        return $"🔋 <b>{displayName}</b> is now charging (inferred)";
+        return $"🔋 <b>{displayName}</b> is now charging";
     }
     
     public static string InferredNotCharging(string displayName)
     {
-        return $"🔌 <b>{displayName}</b> is no longer charging (inferred)";
+        return $"🔌 <b>{displayName}</b> is no longer charging";
     }
 }

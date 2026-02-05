@@ -111,7 +111,9 @@ public class ChargeStateDto
 public enum ChargingStateDto
 {
 	Unknown = 0,
-	Charging = 1,
-	Complete = 2,
+	Disconnected = 1,
+	Stopped = 2,
+	Charging = 3,
+	Complete = 4
 }
 

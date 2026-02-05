@@ -4,7 +4,7 @@ namespace SolarCharge.API.Infrastructure.Tesla.Responses;
 
 public class TeslaVehicleResponse
 {
-    public required TeslaVehicle Response { get; set; }
+    public TeslaVehicle? Response { get; set; }
 }
 
 public class TeslaVehicle

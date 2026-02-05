@@ -8,7 +8,7 @@ using SolarCharge.API.Application.Features.TeslaAuth.Queries;
 using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Features.Vehicles.Infrastructure;
 using SolarCharge.API.Application.Features.Vehicles.Models;
-using SolarCharge.API.Infrastructure.Tesla.Extensions;
+using SolarCharge.API.Infrastructure.Tesla.Mappers;
 using SolarCharge.API.Infrastructure.Tesla.Responses;
 using Wolverine;
 
@@ -68,7 +68,9 @@ public class TeslaClient : ITeslaClient
         var productsResponse = JsonSerializer.Deserialize<TelaProductsResponse>(productsContent, _jsonSerializerOptions);
 
         var product = productsResponse?.Products.FirstOrDefault();
-        return product?.ToDto();
+        return product is not null
+            ? TeslaVehicleMapper.ToDto(product)
+            : null;
     }
 
     public async Task<VehicleDto?> GetVehicleStateAsync(long vehicleId, CancellationToken cancellationToken = default)
@@ -104,6 +106,45 @@ public class TeslaClient : ITeslaClient
         _logger.LogDebug("State retrieved from Tesla. Id: {Id}. State: {State}", 
             vehicleResponse.Response.Id, vehicleResponse.Response.State);
 
-        return vehicleResponse.Response.ToDto();
+        if (vehicleResponse.Response.State != TeslaVehicleState.Online)
+        {
+            _logger.LogTrace("Vehicle is not online. Cannot retrieve more detailed vehicle data at this time. Id: {Id}. State: {State}",
+                vehicleResponse.Response.Id, vehicleResponse.Response.State);
+            return TeslaVehicleMapper.ToDto(vehicleResponse.Response);
+        }
+        
+        var vehicleDataResponse = await GetVehicleDataAsync(vehicleId, teslaAuthTokens, cancellationToken);
+        return vehicleDataResponse?.Response is not null
+            ? TeslaVehicleMapper.ToDto(vehicleResponse.Response, vehicleDataResponse.Response)
+            : TeslaVehicleMapper.ToDto(vehicleResponse.Response);
+    }
+    
+    private async Task<TeslaVehicleDataResponse?> GetVehicleDataAsync(long teslaVehicleId, TeslaAuthentication teslaAuthentication, CancellationToken cancellationToken = default)
+    {
+        _logger.LogTrace("Retrieving vehicle data from Tesla");
+        
+        var httpClient = _httpClientFactory.CreateClient("tesla-owner-api");
+        httpClient.BaseAddress = new Uri(_teslaOptions.Value.TeslaApiUrl);
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", teslaAuthentication.AccessToken);
+
+        var vehicleDataHttpResponse = await httpClient.GetAsync($"/api/1/vehicles/{teslaVehicleId}/vehicle_data", cancellationToken);
+        if (!vehicleDataHttpResponse.IsSuccessStatusCode)
+        {
+            _logger.LogWarning("Could not retrieve vehicle data from Tesla. StatusCode: {StatusCode}", vehicleDataHttpResponse.StatusCode);
+            return null;
+        }
+        
+        var vehicleDataContent = await vehicleDataHttpResponse.Content.ReadAsStringAsync(cancellationToken);
+        var vehicleDataResponse = JsonSerializer.Deserialize<TeslaVehicleDataResponse>(vehicleDataContent, _jsonSerializerOptions);
+        if (vehicleDataResponse?.Response is null)
+        {
+            _logger.LogWarning("Could not parse vehicle data API response");
+            return null;
+        }
+        
+        _logger.LogDebug("Vehicle data retrieved from Tesla. Id: {Id}. ChargeState: {ChargeState}", 
+            vehicleDataResponse.Response.Id, vehicleDataResponse.Response.ChargeState.ChargingState);
+
+        return vehicleDataResponse;
     }
 }
