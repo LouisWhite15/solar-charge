@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SolarCharge.API.Application.Features.Vehicles.Models;
 using SolarCharge.API.Infrastructure.DataAccess;
 using SolarCharge.API.Infrastructure.Database;
 using Wolverine;

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SolarCharge.API.Application.Features.Vehicles.Domain;
+using SolarCharge.API.Application.Features.Vehicles.Extensions;
 using SolarCharge.API.Application.Features.Vehicles.Infrastructure;
 using SolarCharge.API.Application.Shared;
-using SolarCharge.API.Application.Shared.Extensions;
 using SolarCharge.API.Infrastructure.DataAccess;
 using SolarCharge.API.Infrastructure.Database;
 using Wolverine;

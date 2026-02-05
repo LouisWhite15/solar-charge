@@ -7,7 +7,9 @@ using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
 using SolarCharge.API.Application.Features.TeslaAuth.Queries;
 using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Features.Vehicles.Infrastructure;
-using SolarCharge.API.Infrastructure.Tesla.Dtos;
+using SolarCharge.API.Application.Features.Vehicles.Models;
+using SolarCharge.API.Infrastructure.Tesla.Extensions;
+using SolarCharge.API.Infrastructure.Tesla.Responses;
 using Wolverine;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
@@ -63,12 +65,10 @@ public class TeslaClient : ITeslaClient
         }
         
         var productsContent = await productsHttpResponse.Content.ReadAsStringAsync(cancellationToken);
-        var productsResponse = JsonSerializer.Deserialize<ProductsResponse>(productsContent, _jsonSerializerOptions);
+        var productsResponse = JsonSerializer.Deserialize<TelaProductsResponse>(productsContent, _jsonSerializerOptions);
 
         var product = productsResponse?.Products.FirstOrDefault();
-        return product is null
-            ? null
-            : new VehicleDto(product.Id, product.DisplayName, VehicleStateDto.Unknown);
+        return product?.ToDto();
     }
 
     public async Task<VehicleDto?> GetVehicleStateAsync(long vehicleId, CancellationToken cancellationToken = default)
@@ -94,7 +94,7 @@ public class TeslaClient : ITeslaClient
         }
         
         var vehicleContent = await vehicleHttpResponse.Content.ReadAsStringAsync(cancellationToken);
-        var vehicleResponse = JsonSerializer.Deserialize<VehicleResponse>(vehicleContent, _jsonSerializerOptions);
+        var vehicleResponse = JsonSerializer.Deserialize<TeslaVehicleResponse>(vehicleContent, _jsonSerializerOptions);
         if (vehicleResponse?.Response is null)
         {
             _logger.LogWarning("Could not parse vehicle API response");
@@ -104,6 +104,6 @@ public class TeslaClient : ITeslaClient
         _logger.LogDebug("State retrieved from Tesla. Id: {Id}. State: {State}", 
             vehicleResponse.Response.Id, vehicleResponse.Response.State);
 
-        return new VehicleDto(vehicleResponse);
+        return vehicleResponse.Response.ToDto();
     }
 }

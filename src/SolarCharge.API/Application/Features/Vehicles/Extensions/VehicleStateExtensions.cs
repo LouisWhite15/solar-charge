@@ -1,7 +1,8 @@
-﻿using SolarCharge.API.Application.Features.Vehicles;
-using SolarCharge.API.Application.Features.Vehicles.Domain;
+﻿using SolarCharge.API.Application.Features.Vehicles.Domain;
+using SolarCharge.API.Application.Features.Vehicles.Models;
+using SolarCharge.API.Infrastructure.Tesla.Responses;
 
-namespace SolarCharge.API.Application.Shared.Extensions;
+namespace SolarCharge.API.Application.Features.Vehicles.Extensions;
 
 public static class VehicleStateExtensions
 {

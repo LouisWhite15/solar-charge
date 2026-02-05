@@ -1,18 +1,12 @@
 ﻿using SolarCharge.API.Application.Features.Vehicles.Domain;
-using SolarCharge.API.Application.Shared.Extensions;
-using SolarCharge.API.Infrastructure.Tesla.Dtos;
+using SolarCharge.API.Application.Features.Vehicles.Extensions;
 
-namespace SolarCharge.API.Application.Features.Vehicles;
+namespace SolarCharge.API.Application.Features.Vehicles.Models;
 
 public sealed record VehicleDto(long Id, string DisplayName, VehicleStateDto State)
 {
     public VehicleDto(Vehicle vehicle)
         : this(vehicle.Id, vehicle.DisplayName, vehicle.State.ToDto())
-    {
-    }
-
-    public VehicleDto(VehicleResponse vehicleResponse)
-        :this(vehicleResponse.Response.Id, vehicleResponse.Response.DisplayName, vehicleResponse.Response.State)
     {
     }
 }
