@@ -3,6 +3,7 @@ using SolarCharge.API.Application.Features.ChargingStrategy.Commands;
 using SolarCharge.API.Application.Features.Inverter.Queries;
 using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Features.Vehicles.Commands;
+using SolarCharge.API.Application.Features.Vehicles.Models;
 using SolarCharge.API.Application.Features.Vehicles.Queries;
 using Wolverine;
 

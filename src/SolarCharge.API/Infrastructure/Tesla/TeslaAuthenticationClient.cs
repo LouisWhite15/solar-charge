@@ -3,7 +3,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using SolarCharge.API.Application.Features.TeslaAuth;
 using SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
-using SolarCharge.API.Infrastructure.Tesla.Dtos;
+using SolarCharge.API.Infrastructure.Tesla.Responses;
 
 namespace SolarCharge.API.Infrastructure.Tesla;
 
@@ -13,7 +13,7 @@ public class TeslaAuthenticationClient(
     IOptions<TeslaOptions> teslaOptions) 
     : ITeslaAuthenticationClient
 {
-    public async ValueTask<TeslaAuthenticationResult?> GetTokensAsync(string jsonRequest, CancellationToken cancellationToken = default)
+    public async ValueTask<TeslaAuthenticationResponse?> GetTokensAsync(string jsonRequest, CancellationToken cancellationToken = default)
     {
         var httpClient = httpClientFactory.CreateClient("tesla-auth-client");
         var tokenResponse = await httpClient.PostAsync(
@@ -28,7 +28,7 @@ public class TeslaAuthenticationClient(
             return null;
         }
         
-        var tokens = JsonSerializer.Deserialize<TeslaAuthenticationResult>(tokenContent);
+        var tokens = JsonSerializer.Deserialize<TeslaAuthenticationResponse>(tokenContent);
         return tokens;
     }
 }

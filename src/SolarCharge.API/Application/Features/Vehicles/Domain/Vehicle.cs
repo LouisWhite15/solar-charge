@@ -7,16 +7,23 @@ public sealed record Vehicle(
     long Id,
     string DisplayName,
     VehicleState State,
+    bool IsCharging,
     DateTimeOffset LastUpdated)
     : Entity
 {
     public VehicleState State { get; set; } = State;
-    public bool IsCharging { get; set; }
+    public bool IsCharging { get; set; } = IsCharging;
     public DateTimeOffset LastUpdated { get; set; } = LastUpdated;
 
-    public void UpdateState(VehicleState updatedVehicleState, DateTimeOffset now)
+    public void ApplyTelemetry(VehicleTelemetry telemetry)
     {
-        if (now <= LastUpdated)
+        UpdateState(telemetry.State, telemetry.Timestamp);
+        UpdateChargingState(telemetry.IsCharging, telemetry.Timestamp);
+    }
+    
+    private void UpdateState(VehicleState updatedVehicleState, DateTimeOffset now)
+    {
+        if (now < LastUpdated)
         {
             // Ignore out-of-order updates
             return;
@@ -29,8 +36,6 @@ public sealed record Vehicle(
             return;
         }
         
-        InferChargingState(updatedVehicleState, now);
-        
         if (State == updatedVehicleState)
         {
             // Do not trigger state update if the state isn't updating
@@ -40,32 +45,31 @@ public sealed record Vehicle(
         State = updatedVehicleState;
         LastUpdated = now;
     }
-
-    private void InferChargingState(VehicleState updatedVehicleState, DateTimeOffset now)
+    
+    private void UpdateChargingState(bool isCharging, DateTimeOffset now)
     {
-        if (State != VehicleState.Online)
-            return;
-        
-        var durationSinceLastUpdate = now - LastUpdated;
-        if (!IsCharging &&
-            updatedVehicleState == VehicleState.Online &&
-            durationSinceLastUpdate >= TimeSpan.FromMinutes(20))
+        if (now < LastUpdated)
         {
-            // We have to infer at the moment as the API does not provide charging state directly
-            // Based on observation, if the vehicle stays online for more than 20 minutes, it is likely charging (either that or being driven)
-            IsCharging = true;
-            
-            AddDomainEvent(new InferredVehicleChargingEvent(DisplayName));
+            // Ignore out-of-order updates
             return;
         }
         
-        if (IsCharging &&
-            updatedVehicleState != VehicleState.Online)
+        if (IsCharging == isCharging)
         {
-            // Reset charging state if conditions are not met
-            IsCharging = false;
-            
-            AddDomainEvent(new InferredVehicleNotChargingEvent(DisplayName));
+            // Do not trigger state update if the state isn't updating
+            return;
+        }
+        
+        IsCharging = isCharging;
+        LastUpdated = now;
+        
+        if (IsCharging)
+        {
+            AddDomainEvent(new VehicleChargingEvent(DisplayName));
+        }
+        else
+        {
+            AddDomainEvent(new VehicleNotChargingEvent(DisplayName));
         }
     }
 }

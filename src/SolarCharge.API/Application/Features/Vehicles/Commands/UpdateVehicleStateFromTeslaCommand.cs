@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SolarCharge.API.Application.Features.Vehicles.Domain;
+using SolarCharge.API.Application.Features.Vehicles.Extensions;
 using SolarCharge.API.Application.Features.Vehicles.Infrastructure;
 using SolarCharge.API.Application.Shared;
-using SolarCharge.API.Application.Shared.Extensions;
 using SolarCharge.API.Infrastructure.Database;
 using Wolverine;
 
@@ -37,11 +37,19 @@ public sealed record UpdateVehicleStateFromTeslaCommand(long VehicleId)
             logger.LogInformation("Setting ChargeState for Vehicle. Id: {Id}", command.VehicleId);
             var vehicleState = await teslaClient.GetVehicleStateAsync(vehicle.Id, cancellationToken);
 
-            vehicle.UpdateState(
-                vehicleState?.State.ToDomain() ?? VehicleState.Unknown,
+            if (vehicleState is null)
+            {
+                logger.LogWarning("Could not update vehicle state from Tesla. Id: {Id}", command.VehicleId);
+                return;
+            }
+
+            var vehicleTelemetry = new VehicleTelemetry(
+                vehicleState.State.ToDomain(),
+                vehicleState.IsCharging,
                 clock.Now);
+
+            vehicle.ApplyTelemetry(vehicleTelemetry);
             
-            dbContext.Vehicles.Update(vehicle);
             await dbContext.SaveEntitiesAsync(cancellationToken);
         }
     }

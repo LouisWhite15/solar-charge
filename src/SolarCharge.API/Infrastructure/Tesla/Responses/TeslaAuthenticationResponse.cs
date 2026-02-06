@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SolarCharge.API.Infrastructure.Tesla.Dtos;
+namespace SolarCharge.API.Infrastructure.Tesla.Responses;
 
-public class TeslaAuthenticationResult
+public class TeslaAuthenticationResponse
 {
     [JsonPropertyName("access_token")]
     public string AccessToken { get; init; } = string.Empty;

@@ -1,8 +1,8 @@
-using SolarCharge.API.Infrastructure.Tesla.Dtos;
+using SolarCharge.API.Infrastructure.Tesla.Responses;
 
 namespace SolarCharge.API.Application.Features.TeslaAuth.Infrastructure;
 
 public interface ITeslaAuthenticationClient
 {
-    ValueTask<TeslaAuthenticationResult?> GetTokensAsync(string jsonRequest, CancellationToken cancellationToken = default);
+    ValueTask<TeslaAuthenticationResponse?> GetTokensAsync(string jsonRequest, CancellationToken cancellationToken = default);
 }

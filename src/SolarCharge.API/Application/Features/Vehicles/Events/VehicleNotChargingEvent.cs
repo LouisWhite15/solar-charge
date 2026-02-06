@@ -2,4 +2,4 @@
 
 namespace SolarCharge.API.Application.Features.Vehicles.Events;
 
-public sealed record InferredVehicleNotChargingEvent(string DisplayName) : IDomainEvent;
+public sealed record VehicleNotChargingEvent(string DisplayName) : IDomainEvent;
