@@ -7,11 +7,12 @@ public sealed record Vehicle(
     long Id,
     string DisplayName,
     VehicleState State,
+    bool IsCharging,
     DateTimeOffset LastUpdated)
     : Entity
 {
     public VehicleState State { get; set; } = State;
-    public bool IsCharging { get; set; }
+    public bool IsCharging { get; set; } = IsCharging;
     public DateTimeOffset LastUpdated { get; set; } = LastUpdated;
 
     public void ApplyTelemetry(VehicleTelemetry telemetry)

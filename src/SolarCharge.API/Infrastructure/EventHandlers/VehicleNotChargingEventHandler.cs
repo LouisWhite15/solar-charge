@@ -5,13 +5,13 @@ using Wolverine;
 
 namespace SolarCharge.API.Infrastructure.EventHandlers;
 
-public class InferredVehicleNotChargingEventHandler(IMessageBus messageBus) : IWolverineHandler
+public class VehicleNotChargingEventHandler(IMessageBus messageBus) : IWolverineHandler
 {
     public async ValueTask HandleAsync(VehicleNotChargingEvent @event, CancellationToken cancellationToken = default)
     {
         var sendChatMessageCommand = new SendChatMessageCommand(
-            ChatMessageType.InferredNotCharging,
-            ChatMessageTemplates.InferredNotCharging(@event.DisplayName));
+            ChatMessageType.NotCharging,
+            ChatMessageTemplates.NotCharging(@event.DisplayName));
         
         await messageBus.InvokeAsync(sendChatMessageCommand, cancellationToken);
     }

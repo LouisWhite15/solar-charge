@@ -54,6 +54,7 @@ public sealed record RegisterVehicleFromTeslaCommand
                 vehicleDetails.Id,
                 vehicleDetails.DisplayName,
                 vehicleState?.State.ToDomain() ?? VehicleState.Unknown,
+                vehicleState?.IsCharging ?? false,
                 clock.Now);
         
             await dbContext.Vehicles.AddAsync(vehicle, cancellationToken);
