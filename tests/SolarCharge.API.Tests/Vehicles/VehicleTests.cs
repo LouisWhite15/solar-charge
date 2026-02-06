@@ -123,6 +123,24 @@ public class VehicleTests
 		vehicle.DomainEvents.ShouldBeEmpty();
 	}
 	
+	[Fact]
+	public void ApplyTelemetry_ShouldUpdateAllStates_WhenTelemetryIsNewer()
+	{
+		// Arrange
+		var initialTimestamp = DateTimeOffset.UtcNow;
+		var vehicle = CreateVehicle(VehicleState.Offline, false, initialTimestamp);
+		var telemetry = CreateVehicleTelemetry(VehicleState.Online, true, initialTimestamp.AddMinutes(1));
+
+		// Act
+		vehicle.ApplyTelemetry(telemetry);
+
+		// Assert
+		vehicle.State.ShouldBe(VehicleState.Online);
+		vehicle.IsCharging.ShouldBeTrue();
+		vehicle.DomainEvents.ShouldHaveSingleItem().ShouldBeOfType<VehicleChargingEvent>();
+		vehicle.LastUpdated.ShouldBe(telemetry.Timestamp);
+	}
+	
 	private static Vehicle CreateVehicle(VehicleState state, bool isCharging, DateTimeOffset lastUpdated)
 	{
 		return new Vehicle(

@@ -23,7 +23,7 @@ public sealed record Vehicle(
     
     private void UpdateState(VehicleState updatedVehicleState, DateTimeOffset now)
     {
-        if (now <= LastUpdated)
+        if (now < LastUpdated)
         {
             // Ignore out-of-order updates
             return;
@@ -48,7 +48,7 @@ public sealed record Vehicle(
     
     private void UpdateChargingState(bool isCharging, DateTimeOffset now)
     {
-        if (now <= LastUpdated)
+        if (now < LastUpdated)
         {
             // Ignore out-of-order updates
             return;
