@@ -11,7 +11,7 @@ public sealed record CollectInverterTelemetryCommand
         IInverterTelemetryRepository inverterTelemetryRepository)
         : IWolverineHandler
     {
-        public async ValueTask HandleAsync(CollectInverterTelemetryCommand _, CancellationToken cancellationToken)
+        public async Task HandleAsync(CollectInverterTelemetryCommand _, CancellationToken cancellationToken)
         {
             logger.LogDebug("Retrieving inverter status");
             var inverterStatus = await inverterClient.GetAsync(cancellationToken);

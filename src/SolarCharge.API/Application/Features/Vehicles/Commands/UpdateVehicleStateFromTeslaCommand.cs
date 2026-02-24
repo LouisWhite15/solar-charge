@@ -17,7 +17,7 @@ public sealed record UpdateVehicleStateFromTeslaCommand(long VehicleId)
         IClock clock)
         : IWolverineHandler
     {
-        public async ValueTask HandleAsync(UpdateVehicleStateFromTeslaCommand command, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(UpdateVehicleStateFromTeslaCommand command, CancellationToken cancellationToken = default)
         {
             logger.LogTrace("Handling {CommandType}", nameof(UpdateVehicleStateFromTeslaCommand));
         

@@ -16,7 +16,7 @@ public sealed class RefreshTeslaCommand
         IClock clock)
         : IWolverineHandler
     {
-        public async ValueTask HandleAsync(RefreshTeslaCommand _, CancellationToken cancellationToken)
+        public async Task HandleAsync(RefreshTeslaCommand _, CancellationToken cancellationToken)
         {
             var existingTokens = await teslaAuthenticationRepository.GetAsync(cancellationToken);
             if (existingTokens is null)

@@ -18,7 +18,7 @@ public sealed record RegisterVehicleFromTeslaCommand
         IClock clock)
         : IWolverineHandler
     {
-        public async ValueTask HandleAsync(RegisterVehicleFromTeslaCommand _, CancellationToken cancellationToken)
+        public async Task HandleAsync(RegisterVehicleFromTeslaCommand _, CancellationToken cancellationToken)
         {
             logger.LogInformation("Handling {CommandType}", nameof(RegisterVehicleFromTeslaCommand));
         

@@ -7,7 +7,7 @@ namespace SolarCharge.API.Infrastructure.EventHandlers;
 
 public class VehicleChargingEventHandler(IMessageBus messageBus) : IWolverineHandler
 {
-    public async ValueTask HandleAsync(VehicleChargingEvent @event, CancellationToken cancellationToken = default)
+    public async Task HandleAsync(VehicleChargingEvent @event, CancellationToken cancellationToken = default)
     {
         var sendChatMessageCommand = new SendChatMessageCommand(
             ChatMessageType.Charging,

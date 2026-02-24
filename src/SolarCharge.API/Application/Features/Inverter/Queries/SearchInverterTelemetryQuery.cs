@@ -9,7 +9,7 @@ public sealed record SearchInverterTelemetryQuery(TimeSpan TimeSpan)
         ILogger<SearchInverterTelemetryQuery> logger,
         IInverterTelemetryRepository repository) : IWolverineHandler
     {
-        public async ValueTask<InverterTelemetryResult> HandleAsync(SearchInverterTelemetryQuery query, CancellationToken cancellationToken = default)
+        public async Task<InverterTelemetryResult> HandleAsync(SearchInverterTelemetryQuery query, CancellationToken cancellationToken = default)
         {
             logger.LogTrace("Querying inverter status");
             
