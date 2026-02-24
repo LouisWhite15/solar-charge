@@ -12,6 +12,8 @@ public static class ChatBotModule
         services.Configure<ChatBotOptions>(
             configuration.GetSection(ChatBotOptions.SectionName));
 
+        services.AddSingleton<ILastChatMessageCache, LastChatMessageCache>();
+
         if (featureOptions?.IsChatBotEnabled is true)
         {
             services.AddTransient<IChatBotClient, ChatBotClient>();

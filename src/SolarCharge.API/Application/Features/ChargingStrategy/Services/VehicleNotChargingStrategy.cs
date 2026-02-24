@@ -2,6 +2,7 @@
 using SolarCharge.API.Application.Features.ChargingStrategy.Commands;
 using SolarCharge.API.Application.Features.ChargingStrategy.Events;
 using SolarCharge.API.Application.Features.Inverter.Queries;
+using SolarCharge.API.Application.Features.Vehicles.Models;
 using Wolverine;
 
 namespace SolarCharge.API.Application.Features.ChargingStrategy.Services;
@@ -14,7 +15,7 @@ public class VehicleNotChargingStrategy(
 {
     public bool CanEvaluate(ExecuteChargingStrategyCommand command)
     {
-        return !command.Vehicle.IsCharging;
+        return command.Vehicle is { IsCharging: false, State: not VehicleStateDto.Unknown };
     }
     
     public async Task EvaluateAsync(InverterTelemetryResult inverterTelemetryResult, CancellationToken cancellationToken = default)
