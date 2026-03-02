@@ -9,7 +9,7 @@ public class TeslaAuthenticatedEventHandler(
     IMessageBus messageBus)
     : IWolverineHandler
 {
-    public async ValueTask HandleAsync(TeslaAuthenticatedEvent _, CancellationToken cancellationToken)
+    public async Task HandleAsync(TeslaAuthenticatedEvent _, CancellationToken cancellationToken)
     {
         logger.LogInformation("Handling {EventType}", nameof(TeslaAuthenticatedEvent));
 

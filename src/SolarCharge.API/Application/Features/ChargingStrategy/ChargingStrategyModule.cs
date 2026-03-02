@@ -1,6 +1,4 @@
 ﻿using SolarCharge.API.Application.Features.ChargingStrategy.Services;
-using SolarCharge.API.Application.Features.Vehicles;
-using SolarCharge.API.Application.Features.Vehicles.Models;
 
 namespace SolarCharge.API.Application.Features.ChargingStrategy;
 
@@ -11,10 +9,8 @@ public static class ChargingStrategyModule
         services.Configure<ChargingStrategyOptions>(
             configuration.GetSection(ChargingStrategyOptions.SectionName));
         
-        services.AddKeyedTransient<IChargingStrategy, UnknownChargeStateStrategy>(VehicleStateDto.Unknown);
-        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Offline);
-        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Asleep);
-        services.AddKeyedTransient<IChargingStrategy, VehicleNotChargingStrategy>(VehicleStateDto.Online);
+        services.AddTransient<IChargingStrategy, VehicleNotChargingStrategy>();
+        services.AddTransient<IChargingStrategy, VehicleChargingStrategy>();
         
         return services;
     }

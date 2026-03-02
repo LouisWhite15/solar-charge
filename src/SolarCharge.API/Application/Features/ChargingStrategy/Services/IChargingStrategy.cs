@@ -1,8 +1,10 @@
-﻿using SolarCharge.API.Application.Features.Inverter.Queries;
+﻿using SolarCharge.API.Application.Features.ChargingStrategy.Commands;
+using SolarCharge.API.Application.Features.Inverter.Queries;
 
 namespace SolarCharge.API.Application.Features.ChargingStrategy.Services;
 
 public interface IChargingStrategy
 {
-    ValueTask EvaluateAsync(InverterTelemetryResult inverterTelemetryResult, CancellationToken cancellationToken = default);
+    bool CanEvaluate(ExecuteChargingStrategyCommand command);
+    Task EvaluateAsync(InverterTelemetryResult inverterTelemetryResult, CancellationToken cancellationToken = default);
 }

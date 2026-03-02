@@ -13,7 +13,7 @@ public sealed record SendChatMessageCommand(ChatMessageType Type, string Message
         ILastChatMessageCache lastChatMessageCache,
         IClock clock) : IWolverineHandler
     {
-        public async ValueTask HandleAsync(SendChatMessageCommand command, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(SendChatMessageCommand command, CancellationToken cancellationToken = default)
         {
             var lastChatMessage = await lastChatMessageCache.GetAsync(cancellationToken);
 

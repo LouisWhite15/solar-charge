@@ -4,6 +4,6 @@ namespace SolarCharge.API.Application.Features.ChatBot.Infrastructure;
 
 public interface ILastChatMessageCache
 {
-    ValueTask<ChatMessage?> GetAsync(CancellationToken cancellationToken = default);
-    ValueTask SetAsync(ChatMessage chatMessage, CancellationToken cancellationToken = default);
+    Task<ChatMessage?> GetAsync(CancellationToken cancellationToken = default);
+    Task SetAsync(ChatMessage chatMessage, CancellationToken cancellationToken = default);
 }

@@ -12,7 +12,7 @@ public abstract class AsyncTimedHostedService(
         while (!cancellationToken.IsCancellationRequested)
         {
             // When the timer should have no due-time, then do the work once now.
-            await DoWorkAsync();
+            await DoWorkAsync(cancellationToken);
 
             using PeriodicTimer timer = new(TimeSpan.FromSeconds(periodSeconds));
             try

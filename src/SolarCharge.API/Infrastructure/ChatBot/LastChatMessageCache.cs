@@ -8,21 +8,21 @@ public class LastChatMessageCache : ILastChatMessageCache
     private ChatMessage? _last;
     private readonly Lock _lock = new();
     
-    public ValueTask<ChatMessage?> GetAsync(CancellationToken cancellationToken = default)
+    public Task<ChatMessage?> GetAsync(CancellationToken cancellationToken = default)
     {
         lock (_lock)
         {
-            return ValueTask.FromResult(_last);
+            return Task.FromResult(_last);
         }
     }
 
-    public ValueTask SetAsync(ChatMessage chatMessage, CancellationToken cancellationToken = default)
+    public Task SetAsync(ChatMessage chatMessage, CancellationToken cancellationToken = default)
     {
         lock (_lock)
         {
             _last = chatMessage;
         }
 
-        return ValueTask.CompletedTask;
+        return Task.CompletedTask;
     }
 }

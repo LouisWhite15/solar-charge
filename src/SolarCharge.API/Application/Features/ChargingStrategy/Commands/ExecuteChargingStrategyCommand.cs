@@ -1,6 +1,5 @@
 ﻿using SolarCharge.API.Application.Features.ChargingStrategy.Services;
 using SolarCharge.API.Application.Features.Inverter.Queries;
-using SolarCharge.API.Application.Features.Vehicles;
 using SolarCharge.API.Application.Features.Vehicles.Models;
 using Wolverine;
 
@@ -10,16 +9,26 @@ public sealed record ExecuteChargingStrategyCommand(VehicleDto Vehicle, Inverter
 {
     public class Handler(
         ILogger<Handler> logger,
-        IServiceProvider serviceProvider)
+        IEnumerable<IChargingStrategy> chargingStrategies)
         : IWolverineHandler
     {
-        public async ValueTask HandleAsync(ExecuteChargingStrategyCommand command, CancellationToken cancellationToken = default)
+        public async Task HandleAsync(ExecuteChargingStrategyCommand command, CancellationToken cancellationToken = default)
         {
-            var scope = serviceProvider.CreateScope();
-            var chargingStrategy = scope.ServiceProvider.GetRequiredKeyedService<IChargingStrategy>(command.Vehicle.State);
-        
-            logger.LogDebug("Executing charging strategy. State: {ChargeState}. VehicleId: {VehicleId}", command.Vehicle.State, command.Vehicle.Id);
-            await chargingStrategy.EvaluateAsync(command.InverterTelemetryResult, cancellationToken);
+            var strategy = chargingStrategies.FirstOrDefault(strategy => strategy.CanEvaluate(command));
+            if (strategy is null)
+            {
+                logger.LogWarning("No charging strategy could be found to evaluate the current state of the vehicle. VehicleId: {VehicleId}. IsCharging: {IsCharging}",
+                    command.Vehicle.Id,
+                    command.Vehicle.IsCharging);
+                return;
+            }
+            
+            logger.LogDebug("Executing charging strategy '{ChargingStrategyType}'. VehicleId: {VehicleId}. IsCharging: {IsCharging}",
+                strategy.GetType().Name,
+                command.Vehicle.Id,
+                command.Vehicle.IsCharging);
+            
+            await strategy.EvaluateAsync(command.InverterTelemetryResult, cancellationToken);
         }
     }
 }

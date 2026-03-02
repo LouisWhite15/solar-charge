@@ -10,7 +10,7 @@ public sealed record GetTeslaAuthenticationTokenQuery
         ILogger<GetTeslaAuthenticationTokenQuery> logger,
         ITeslaAuthenticationRepository repository) : IWolverineHandler
     {
-        public async ValueTask<TeslaAuthentication?> HandleAsync(GetTeslaAuthenticationTokenQuery _, CancellationToken cancellationToken = default)
+        public async Task<TeslaAuthentication?> HandleAsync(GetTeslaAuthenticationTokenQuery _, CancellationToken cancellationToken = default)
         {
             logger.LogTrace("Querying Tesla Authentication Tokens");
             

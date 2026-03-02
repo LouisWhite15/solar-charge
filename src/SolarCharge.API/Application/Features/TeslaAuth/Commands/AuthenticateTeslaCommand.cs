@@ -19,7 +19,7 @@ public sealed class AuthenticateTeslaCommand(string urlWithCode, Dictionary<stri
         ITeslaAuthenticationClient teslaAuthenticationClient)
         : IWolverineHandler
     {
-        public async ValueTask<bool> HandleAsync(AuthenticateTeslaCommand command, CancellationToken cancellationToken)
+        public async Task<bool> HandleAsync(AuthenticateTeslaCommand command, CancellationToken cancellationToken)
         {
             var finalUri = new Uri(command.UrlWithCode);
             var queryParams = HttpUtility.ParseQueryString(finalUri.Query);
