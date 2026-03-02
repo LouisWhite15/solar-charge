@@ -25,7 +25,7 @@ public sealed record ExecuteChargingStrategyCommand(VehicleDto Vehicle, Inverter
             
             logger.LogDebug("Executing charging strategy '{ChargingStrategyType}'. VehicleId: {VehicleId}. IsCharging: {IsCharging}",
                 strategy.GetType().Name,
-                command.Vehicle.State,
+                command.Vehicle.Id,
                 command.Vehicle.IsCharging);
             
             await strategy.EvaluateAsync(command.InverterTelemetryResult, cancellationToken);
