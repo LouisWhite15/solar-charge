@@ -34,7 +34,7 @@ public sealed record UpdateVehicleStateFromTeslaCommand(long VehicleId)
                 return;
             }
         
-            logger.LogInformation("Setting ChargeState for Vehicle. Id: {Id}", command.VehicleId);
+            logger.LogInformation("Retrieving vehicle state for vehicle. Id: {Id}", command.VehicleId);
             var vehicleState = await teslaClient.GetVehicleStateAsync(vehicle.Id, cancellationToken);
 
             if (vehicleState is null)

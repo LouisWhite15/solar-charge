@@ -42,7 +42,8 @@ public class VehicleChargingStrategy(
             return;
         }
         
-        logger.LogDebug("Condition to stop charging was not met. Value retrieved from inverter telemetry: {GridValue}W",
-            mostRecentStatus.Grid);
+        logger.LogDebug("Condition to stop charging was not met. Value retrieved from inverter telemetry: {GridValue}W. Configured threshold: {Threshold}W",
+            mostRecentStatus.Grid,
+            stopChargingPullingFromGridThresholdWatts);
     }
 }

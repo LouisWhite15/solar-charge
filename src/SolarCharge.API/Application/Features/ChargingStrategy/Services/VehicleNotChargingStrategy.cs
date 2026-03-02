@@ -32,7 +32,7 @@ public class VehicleNotChargingStrategy(
         var gridAbsoluteWatts = Math.Abs(mostRecentStatus.Grid);
         
         // If we are supplying more to the grid (negative value) than the configured start charging threshold, we should start charging
-        if (mostRecentStatus.Grid <= -startChargingExcessGenerationThresholdWatts)
+        if (mostRecentStatus.Grid < 0 && gridAbsoluteWatts > startChargingExcessGenerationThresholdWatts)
         {
             logger.LogDebug("Supplying {GridValue}W to the grid. This exceeds the configured threshold of {Threshold}W",
                 gridAbsoluteWatts,
@@ -42,7 +42,8 @@ public class VehicleNotChargingStrategy(
             return;
         }
         
-        logger.LogDebug("Condition to start charging was not met. Value retrieved from inverter telemetry: {GridValue}W",
-            mostRecentStatus.Grid);
+        logger.LogDebug("Condition to start charging was not met. Value retrieved from inverter telemetry: {GridValue}W. Configured threshold: {Threshold}W",
+            mostRecentStatus.Grid,
+            -startChargingExcessGenerationThresholdWatts);
     }
 }
