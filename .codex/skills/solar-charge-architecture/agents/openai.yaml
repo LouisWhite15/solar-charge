@@ -1,0 +1,7 @@
+interface:
+  display_name: "SolarCharge Architecture"
+  short_description: "Apply SolarCharge repo architecture rules"
+  default_prompt: "Use $solar-charge-architecture to make a repository change that follows SolarCharge's vertical-slice layout and service boundaries."
+
+policy:
+  allow_implicit_invocation: true

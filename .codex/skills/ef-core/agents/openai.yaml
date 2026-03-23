@@ -1,0 +1,7 @@
+interface:
+  display_name: "EF Core"
+  short_description: "Apply EF Core modeling and migration rules"
+  default_prompt: "Use $ef-core to update Entity Framework Core models, queries, or migrations safely."
+
+policy:
+  allow_implicit_invocation: true
