@@ -1,0 +1,7 @@
+interface:
+  display_name: ".NET Best Practices"
+  short_description: "Apply repo-aligned .NET conventions"
+  default_prompt: "Use $dotnet-best-practices to implement this C# or .NET change using the repository's existing patterns."
+
+policy:
+  allow_implicit_invocation: true

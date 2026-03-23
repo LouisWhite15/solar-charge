@@ -59,10 +59,20 @@ Keep new work inside the most relevant existing feature. If a change spans multi
 - `SolarCharge.API` and `SolarCharge.ChatBot` are separate deployable apps. Do not casually couple them together with shared runtime assumptions.
 - If logic is only used by one app, keep it there.
 
-## Skills and repository instructions
+## Codex skill artifacts
+Repository-specific and migrated reusable Codex skills live under `.codex/skills/`.
+
+### Available skills
+- `solar-charge-architecture`: repository-specific placement, architecture, and workflow guidance.
+- `dotnet-best-practices`: general .NET/C# implementation guidance.
+- `csharp-async`: async/await guidance for C# changes.
+- `csharp-xunit`: xUnit testing conventions.
+- `ef-core`: EF Core modeling, querying, and migration guidance.
+
+### Skill usage rules
 - Always look for `AGENTS.md` files before changing files, and obey the most specific one in scope.
-- If a task clearly matches an available skill, use that skill instead of recreating the workflow from scratch.
-- In this repo, skill usage is especially important for tasks related to creating or installing Codex skills.
+- If a task clearly matches one of the skills above, use the relevant skill instead of recreating the workflow from scratch.
+- For most non-trivial repository changes, start with `solar-charge-architecture` and add the more specific .NET skill only when needed.
 - Keep loaded context small: read only the files needed to complete the task.
 
 ## Practical guidance for future agents

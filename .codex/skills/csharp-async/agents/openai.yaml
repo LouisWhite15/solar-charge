@@ -1,0 +1,7 @@
+interface:
+  display_name: "C# Async"
+  short_description: "Review and write async C# safely"
+  default_prompt: "Use $csharp-async to implement or review asynchronous C# code in this change."
+
+policy:
+  allow_implicit_invocation: true

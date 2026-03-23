@@ -1,0 +1,7 @@
+interface:
+  display_name: "C# xUnit"
+  short_description: "Write focused xUnit test coverage"
+  default_prompt: "Use $csharp-xunit to add or update xUnit tests for this .NET change."
+
+policy:
+  allow_implicit_invocation: true
